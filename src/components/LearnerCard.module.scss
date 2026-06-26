@@ -94,13 +94,13 @@ $colors: (
 }
 
 .fruitImage {
-  width: clamp(60px, 20vw, 90px);
-  height: clamp(60px, 20vw, 90px);
-  margin-bottom: 6px;
+  width: clamp(90px, 30vw, 140px);
+  height: clamp(90px, 30vw, 140px);
+  margin-bottom: 8px;
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 
   img {
     width: 100%;
@@ -123,12 +123,12 @@ $colors: (
   overflow-wrap: break-word;
 
   &.long {
-    font-size: clamp(0.95rem, 3.8vw, 1.6rem);
+    font-size: clamp(0.8rem, 3.2vw, 1.3rem);
     letter-spacing: 0.5px;
   }
 
   &.medium {
-    font-size: clamp(1.5rem, 6vw, 2.6rem);
+    font-size: clamp(1.2rem, 5vw, 2rem);
     letter-spacing: 1px;
   }
 }

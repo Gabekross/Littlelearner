@@ -1,56 +1,18 @@
-let voiceCache: SpeechSynthesisVoice | null = null;
-let warmedUp = false;
+const audioCache = new Map<string, HTMLAudioElement>();
 
-function getBestVoice(): SpeechSynthesisVoice | null {
-  if (voiceCache) return voiceCache;
-  const voices = speechSynthesis.getVoices();
-  if (!voices.length) return null;
+function getTtsUrl(text: string): string {
+  return `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodeURIComponent(text)}`;
+}
 
-  const priority: Array<(v: SpeechSynthesisVoice) => boolean> = [
-    // Neural / natural-sounding voices (Windows "Online" voices)
-    (v) => v.lang.startsWith("en") && /online|natural|neural/i.test(v.name),
-    // Good desktop voices
-    (v) => /Samantha/i.test(v.name),
-    (v) => /Zira/i.test(v.name),
-    (v) => /Eva/i.test(v.name),
-    (v) => /Aria/i.test(v.name),
-    (v) => /Jenny/i.test(v.name),
-    (v) => /Google US.*Female/i.test(v.name),
-    (v) => /Google UK.*Female/i.test(v.name),
-    (v) => v.lang === "en-US" && /female/i.test(v.name),
-    (v) => v.lang === "en-US",
-    (v) => v.lang.startsWith("en"),
-  ];
-
-  for (const test of priority) {
-    const match = voices.find(test);
-    if (match) {
-      voiceCache = match;
-      return match;
-    }
+export function preloadAudio(texts: string[]) {
+  for (const text of texts) {
+    if (audioCache.has(text)) continue;
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.src = getTtsUrl(text);
+    audioCache.set(text, audio);
   }
-  voiceCache = voices[0];
-  return voices[0];
 }
-
-export function initVoices() {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  getBestVoice();
-  speechSynthesis.addEventListener("voiceschanged", () => {
-    voiceCache = null;
-    getBestVoice();
-  });
-}
-
-export function warmUp() {
-  if (warmedUp || typeof window === "undefined" || !window.speechSynthesis) return;
-  warmedUp = true;
-  const u = new SpeechSynthesisUtterance("");
-  u.volume = 0;
-  speechSynthesis.speak(u);
-}
-
-let currentAudio: SpeechSynthesisUtterance | null = null;
 
 export function speak(
   text: string,
@@ -58,32 +20,18 @@ export function speak(
   onStart: () => void,
   onEnd: () => void
 ) {
-  if (!window.speechSynthesis) {
-    onEnd();
-    return;
+  let audio = audioCache.get(text);
+  if (audio) {
+    audio.currentTime = 0;
+  } else {
+    audio = new Audio(getTtsUrl(text));
+    audioCache.set(text, audio);
   }
 
-  speechSynthesis.cancel();
-  currentAudio = null;
+  audio.volume = volume;
+  audio.onplay = onStart;
+  audio.onended = onEnd;
+  audio.onerror = onEnd;
 
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 0.82;
-  utter.pitch = 1.15;
-  utter.volume = volume;
-
-  const voice = getBestVoice();
-  if (voice) utter.voice = voice;
-
-  utter.onstart = onStart;
-  utter.onend = () => {
-    currentAudio = null;
-    onEnd();
-  };
-  utter.onerror = () => {
-    currentAudio = null;
-    onEnd();
-  };
-
-  currentAudio = utter;
-  speechSynthesis.speak(utter);
+  audio.play().catch(onEnd);
 }

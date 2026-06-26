@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { getDataForMode, type Mode } from "@/data/cardData";
-import { initVoices, warmUp, speak } from "@/lib/speech";
+import { preloadAudio, speak } from "@/lib/speech";
 import LearnerCard from "@/components/LearnerCard";
 import styles from "./page.module.scss";
 
@@ -40,7 +40,6 @@ export default function Home() {
   const activeCardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    initVoices();
     const resizeCanvas = () => {
       const c = canvasRef.current;
       if (c) {
@@ -50,15 +49,13 @@ export default function Home() {
     };
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    const handleInteraction = () => { warmUp(); };
-    document.addEventListener("touchstart", handleInteraction, { once: true });
-    document.addEventListener("click", handleInteraction, { once: true });
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      document.removeEventListener("touchstart", handleInteraction);
-      document.removeEventListener("click", handleInteraction);
-    };
+    return () => window.removeEventListener("resize", resizeCanvas);
   }, []);
+
+  useEffect(() => {
+    const data = getDataForMode(mode);
+    preloadAudio(data.map((d) => d.say));
+  }, [mode]);
 
   const showToast = useCallback((text: string) => {
     setToastText(text);
