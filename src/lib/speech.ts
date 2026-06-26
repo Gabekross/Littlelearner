@@ -1,7 +1,7 @@
 const audioCache = new Map<string, HTMLAudioElement>();
 
 function getTtsUrl(text: string): string {
-  return `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodeURIComponent(text)}`;
+  return `/api/tts?q=${encodeURIComponent(text)}`;
 }
 
 export function preloadAudio(texts: string[]) {
