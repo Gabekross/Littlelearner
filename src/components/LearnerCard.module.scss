@@ -1,0 +1,189 @@
+@use "sass:map";
+
+$colors: (
+  0: (from: #ff4757, to: #ff6b9d, shadow: rgba(255, 71, 87, 0.55), bottom: #a02040),
+  1: (from: #ff6b35, to: #ffd700, shadow: rgba(255, 107, 53, 0.55), bottom: #b04010),
+  2: (from: #ffd700, to: #ff9f43, shadow: rgba(255, 215, 0, 0.55), bottom: #907000),
+  3: (from: #2ed573, to: #1e90ff, shadow: rgba(46, 213, 115, 0.55), bottom: #0a8040),
+  4: (from: #1e90ff, to: #5352ed, shadow: rgba(30, 144, 255, 0.55), bottom: #0040b0),
+  5: (from: #5352ed, to: #a855f7, shadow: rgba(83, 82, 237, 0.55), bottom: #2020a0),
+  6: (from: #a855f7, to: #ff6b9d, shadow: rgba(168, 85, 247, 0.55), bottom: #6010a0),
+  7: (from: #ff6b9d, to: #ff4757, shadow: rgba(255, 107, 157, 0.55), bottom: #a02050),
+  8: (from: #2ed573, to: #ffd700, shadow: rgba(46, 213, 115, 0.55), bottom: #108030),
+  9: (from: #ff4757, to: #5352ed, shadow: rgba(255, 71, 87, 0.45), bottom: #6010a0),
+);
+
+@each $i, $c in $colors {
+  .color#{$i} {
+    background: linear-gradient(145deg, map.get($c, from), map.get($c, to));
+    box-shadow: 0 8px 25px map.get($c, shadow), 0 4px 0 map.get($c, bottom);
+  }
+}
+
+.wrap {
+  perspective: 600px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.card3d {
+  width: 100%;
+  aspect-ratio: 1 / 1.15;
+  position: relative;
+  border-radius: 22px;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out, box-shadow 0.15s;
+  will-change: transform;
+
+  &.speaking::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 28px;
+    border: 4px solid rgba(255, 255, 255, 0.9);
+    animation: pulseRing 0.6s ease-out infinite;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  &.bouncing {
+    animation: cardBounce 0.42s ease;
+  }
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      105deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 80%
+    );
+    transform: skewX(-15deg);
+    transition: left 0.5s;
+    pointer-events: none;
+  }
+}
+
+.wrap:active .face::after {
+  left: 120%;
+}
+
+.emoji {
+  font-size: clamp(2.2rem, 8vw, 3.6rem);
+  line-height: 1;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.fruitImage {
+  width: clamp(60px, 20vw, 90px);
+  height: clamp(60px, 20vw, 90px);
+  margin-bottom: 6px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.word {
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: clamp(3.4rem, 13vw, 5.6rem);
+  color: #fff;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 4px;
+  font-weight: 700;
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+
+  &.long {
+    font-size: clamp(0.95rem, 3.8vw, 1.6rem);
+    letter-spacing: 0.5px;
+  }
+
+  &.medium {
+    font-size: clamp(1.5rem, 6vw, 2.6rem);
+    letter-spacing: 1px;
+  }
+}
+
+.hint {
+  font-family: var(--font-nunito), sans-serif;
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+.soundWave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  &.playing {
+    opacity: 1;
+  }
+
+  span {
+    display: block;
+    width: 4px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.95);
+    animation: wave 0.55s ease-in-out infinite alternate;
+
+    &:nth-child(1) { height: 8px;  animation-delay: 0s; }
+    &:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+    &:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+    &:nth-child(4) { height: 15px; animation-delay: 0.3s; }
+    &:nth-child(5) { height: 8px;  animation-delay: 0.4s; }
+  }
+}
+
+@keyframes pulseRing {
+  0%   { transform: scale(1);    opacity: 1; }
+  100% { transform: scale(1.08); opacity: 0; }
+}
+
+@keyframes cardBounce {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.88) rotateZ(-3deg); }
+  60%  { transform: scale(1.07) rotateZ(2deg); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wave {
+  from { transform: scaleY(0.4); }
+  to   { transform: scaleY(1.4); }
+}
