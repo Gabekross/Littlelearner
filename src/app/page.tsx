@@ -54,7 +54,13 @@ export default function Home() {
 
   useEffect(() => {
     const data = getDataForMode(mode);
-    preloadAudio(data.map((d) => d.say));
+    const texts = data.map((d) => d.say);
+    if (mode === "words") {
+      const letters = new Set<string>();
+      data.forEach((d) => d.word.split("").forEach((ch) => letters.add(ch)));
+      texts.push(...letters);
+    }
+    preloadAudio(texts);
   }, [mode]);
 
   const showToast = useCallback((text: string) => {
@@ -194,7 +200,7 @@ export default function Home() {
 
       <div className={styles.grid}>
         {data.map((item, i) => (
-          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} onSpeak={handleSpeak} />
+          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={mode === "words"} onSpeak={handleSpeak} />
         ))}
       </div>
 

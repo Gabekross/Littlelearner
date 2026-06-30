@@ -133,6 +133,22 @@ $colors: (
   }
 }
 
+.letter {
+  display: inline-block;
+  transition: transform 0.15s, color 0.15s;
+
+  &.pulse {
+    animation: letterPulse 0.5s ease;
+    color: #ffd700;
+  }
+}
+
+@keyframes letterPulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.55); }
+  100% { transform: scale(1); }
+}
+
 .hint {
   font-family: var(--font-nunito), sans-serif;
   font-size: clamp(0.65rem, 2vw, 0.85rem);
