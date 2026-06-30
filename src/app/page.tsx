@@ -9,6 +9,7 @@ import styles from "./page.module.scss";
 const TABS: { mode: Mode; icon: string; label: string }[] = [
   { mode: "words", icon: "🗣️", label: "Words" },
   { mode: "words3", icon: "📖", label: "3-Letter" },
+  { mode: "words4", icon: "📝", label: "4-Letter" },
   { mode: "letters", icon: "🔤", label: "Letters" },
   { mode: "numbers", icon: "🔢", label: "1-10" },
   { mode: "numbers2", icon: "🔢", label: "11-20" },
@@ -57,7 +58,7 @@ export default function Home() {
   useEffect(() => {
     const data = getDataForMode(mode);
     const texts = data.map((d) => d.say);
-    if (mode === "words" || mode === "words3") {
+    if (mode === "words" || mode === "words3" || mode === "words4") {
       const letters = new Set<string>();
       data.forEach((d) => d.word.split("").forEach((ch) => letters.add(ch)));
       texts.push(...letters);
@@ -214,7 +215,7 @@ export default function Home() {
 
       <div className={styles.grid}>
         {data.map((item, i) => (
-          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3")} onSpeak={handleSpeak} />
+          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3" || mode === "words4")} onSpeak={handleSpeak} />
         ))}
       </div>
 

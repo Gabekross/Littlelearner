@@ -124,7 +124,60 @@ export const WORDS3: CardItem[] = [
   { word: "ZOO", emoji: "🦁", say: "zoo" },
 ];
 
-export type Mode = "words" | "words3" | "letters" | "numbers" | "numbers2" | "fruits";
+export const WORDS4: CardItem[] = [
+  { word: "BALL", emoji: "⚽", say: "ball" },
+  { word: "BIRD", emoji: "🐦", say: "bird" },
+  { word: "BOOK", emoji: "📖", say: "book" },
+  { word: "CAKE", emoji: "🎂", say: "cake" },
+  { word: "CLAP", emoji: "👏", say: "clap" },
+  { word: "COLD", emoji: "🥶", say: "cold" },
+  { word: "COOK", emoji: "👩‍🍳", say: "cook" },
+  { word: "DOOR", emoji: "🚪", say: "door" },
+  { word: "DRAW", emoji: "🖍️", say: "draw" },
+  { word: "DUCK", emoji: "🦆", say: "duck" },
+  { word: "FACE", emoji: "😊", say: "face" },
+  { word: "FARM", emoji: "🌾", say: "farm" },
+  { word: "FAST", emoji: "💨", say: "fast" },
+  { word: "FIRE", emoji: "🔥", say: "fire" },
+  { word: "FISH", emoji: "🐟", say: "fish" },
+  { word: "FLAG", emoji: "🏁", say: "flag" },
+  { word: "FOOD", emoji: "🍕", say: "food" },
+  { word: "FROG", emoji: "🐸", say: "frog" },
+  { word: "GAME", emoji: "🎮", say: "game" },
+  { word: "GIFT", emoji: "🎁", say: "gift" },
+  { word: "GOLD", emoji: "🥇", say: "gold" },
+  { word: "GOOD", emoji: "👍", say: "good" },
+  { word: "HAND", emoji: "✋", say: "hand" },
+  { word: "HIDE", emoji: "🙈", say: "hide" },
+  { word: "HOME", emoji: "🏠", say: "home" },
+  { word: "JUMP", emoji: "🤸", say: "jump" },
+  { word: "KING", emoji: "👑", say: "king" },
+  { word: "KITE", emoji: "🪁", say: "kite" },
+  { word: "LAMP", emoji: "💡", say: "lamp" },
+  { word: "LEAF", emoji: "🍃", say: "leaf" },
+  { word: "LION", emoji: "🦁", say: "lion" },
+  { word: "LOVE", emoji: "❤️", say: "love" },
+  { word: "MILK", emoji: "🥛", say: "milk" },
+  { word: "MOON", emoji: "🌙", say: "moon" },
+  { word: "NEST", emoji: "🪺", say: "nest" },
+  { word: "NOSE", emoji: "👃", say: "nose" },
+  { word: "PARK", emoji: "🏞️", say: "park" },
+  { word: "PLAY", emoji: "🎪", say: "play" },
+  { word: "RAIN", emoji: "🌧️", say: "rain" },
+  { word: "RING", emoji: "💍", say: "ring" },
+  { word: "ROAD", emoji: "🛣️", say: "road" },
+  { word: "ROCK", emoji: "🪨", say: "rock" },
+  { word: "SHIP", emoji: "🚢", say: "ship" },
+  { word: "SHOE", emoji: "👟", say: "shoe" },
+  { word: "SING", emoji: "🎤", say: "sing" },
+  { word: "SNOW", emoji: "❄️", say: "snow" },
+  { word: "STAR", emoji: "⭐", say: "star" },
+  { word: "SWIM", emoji: "🏊", say: "swim" },
+  { word: "TREE", emoji: "🌳", say: "tree" },
+  { word: "WISH", emoji: "🌠", say: "wish" },
+];
+
+export type Mode = "words" | "words3" | "words4" | "letters" | "numbers" | "numbers2" | "fruits";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
@@ -132,6 +185,8 @@ export function getDataForMode(mode: Mode): CardItem[] {
       return WORDS;
     case "words3":
       return WORDS3;
+    case "words4":
+      return WORDS4;
     case "letters":
       return LETTERS;
     case "numbers":
