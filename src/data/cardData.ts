@@ -91,12 +91,47 @@ export const FRUITS: CardItem[] = [
   { word: "AVOCADO", emoji: "🥑", say: "avocado", image: "/fruits/avocado.jpg" },
 ];
 
-export type Mode = "words" | "letters" | "numbers" | "numbers2" | "fruits";
+export const WORDS3: CardItem[] = [
+  { word: "CAT", emoji: "🐱", say: "cat" },
+  { word: "DOG", emoji: "🐶", say: "dog" },
+  { word: "SUN", emoji: "☀️", say: "sun" },
+  { word: "MOM", emoji: "👩", say: "mom" },
+  { word: "DAD", emoji: "👨", say: "dad" },
+  { word: "BIG", emoji: "🐘", say: "big" },
+  { word: "RUN", emoji: "🏃", say: "run" },
+  { word: "RED", emoji: "🔴", say: "red" },
+  { word: "BUS", emoji: "🚌", say: "bus" },
+  { word: "CUP", emoji: "🥤", say: "cup" },
+  { word: "HAT", emoji: "🎩", say: "hat" },
+  { word: "PIG", emoji: "🐷", say: "pig" },
+  { word: "BED", emoji: "🛏️", say: "bed" },
+  { word: "FUN", emoji: "🎉", say: "fun" },
+  { word: "HOP", emoji: "🐰", say: "hop" },
+  { word: "MAP", emoji: "🗺️", say: "map" },
+  { word: "NET", emoji: "🥅", say: "net" },
+  { word: "BOX", emoji: "📦", say: "box" },
+  { word: "FLY", emoji: "🪰", say: "fly" },
+  { word: "COW", emoji: "🐄", say: "cow" },
+  { word: "EGG", emoji: "🥚", say: "egg" },
+  { word: "JAM", emoji: "🍓", say: "jam" },
+  { word: "HUG", emoji: "🤗", say: "hug" },
+  { word: "TOP", emoji: "🔝", say: "top" },
+  { word: "PEN", emoji: "🖊️", say: "pen" },
+  { word: "BAT", emoji: "🦇", say: "bat" },
+  { word: "ANT", emoji: "🐜", say: "ant" },
+  { word: "OWL", emoji: "🦉", say: "owl" },
+  { word: "VAN", emoji: "🚐", say: "van" },
+  { word: "ZOO", emoji: "🦁", say: "zoo" },
+];
+
+export type Mode = "words" | "words3" | "letters" | "numbers" | "numbers2" | "fruits";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
     case "words":
       return WORDS;
+    case "words3":
+      return WORDS3;
     case "letters":
       return LETTERS;
     case "numbers":
