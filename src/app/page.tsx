@@ -28,6 +28,7 @@ interface Particle {
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>("words");
+  const [spellMode, setSpellMode] = useState(false);
   const [toastText, setToastText] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
   const volumeRef = useRef(1.0);
@@ -186,6 +187,18 @@ export default function Home() {
         <label>🔊</label>
       </div>
 
+      <div className={styles.spellToggle}>
+        <label className={styles.toggleLabel}>
+          <span>Spell Mode</span>
+          <input
+            type="checkbox"
+            checked={spellMode}
+            onChange={(e) => setSpellMode(e.target.checked)}
+          />
+          <span className={styles.toggleSlider} />
+        </label>
+      </div>
+
       <div className={styles.tabs}>
         {TABS.map((t) => (
           <button
@@ -200,7 +213,7 @@ export default function Home() {
 
       <div className={styles.grid}>
         {data.map((item, i) => (
-          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={mode === "words"} onSpeak={handleSpeak} />
+          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && mode === "words"} onSpeak={handleSpeak} />
         ))}
       </div>
 
