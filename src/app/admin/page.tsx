@@ -4,6 +4,17 @@ import { useState, useEffect, useCallback } from "react";
 import type { CardItem } from "@/data/cardData";
 import styles from "./admin.module.scss";
 
+const EMOJI_GROUPS: { label: string; emojis: string[] }[] = [
+  { label: "Animals", emojis: ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🐦","🐤","🦆","🦅","🦉","🦇","🐺","🐗","🐴","🦄","🐝","🐛","🦋","🐌","🐞","🐜","🐢","🐍","🦎","🐙","🦑","🦀","🐡","🐠","🐟","🐬","🐳","🐋","🦈","🐊","🐅","🐆","🦓","🦍","🦧","🐘","🦛","🦏","🐪","🦒","🦘","🐃","🐂","🐄","🐎","🐖","🐏","🐑","🐐","🦌","🐕","🐩","🐈","🐓","🦃","🕊️","🐇","🐁","🐀","🦔","🐿️","🦨","🦡","🦦","🦥"] },
+  { label: "Food", emojis: ["🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🫐","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🥑","🍆","🌽","🥕","🥔","🧅","🧄","🥦","🥬","🥒","🌶️","🫑","🥜","🍞","🥐","🥖","🥨","🧀","🥚","🍳","🥞","🧇","🥓","🍔","🍟","🌭","🍕","🌮","🌯","🥙","🍝","🍜","🍲","🍛","🍣","🍱","🍩","🍪","🎂","🍰","🧁","🍫","🍬","🍭","🍦","🍨","🧃","🥤","☕","🍵","🥛","🍼"] },
+  { label: "Nature", emojis: ["🌸","💐","🌷","🌹","🥀","🌺","🌻","🌼","🌿","🍀","🍁","🍂","🍃","🌵","🎄","🌲","🌳","🌴","🪵","🌱","🌾","🍄","🪨","💎","🌊","🌈","☀️","🌤️","⛅","🌦️","🌧️","⛈️","🌩️","❄️","☃️","🌬️","💨","🔥","⭐","🌟","💫","✨","🌍","🌙","☁️","🪻","🪷","🫧"] },
+  { label: "Transport", emojis: ["🚗","🚕","🚙","🚌","🚎","🏎️","🚓","🚑","🚒","🚐","🛻","🚚","🚛","🚜","🏍️","🛵","🚲","🛴","🚁","✈️","🛩️","🚀","🛸","🚢","⛵","🚤","🛥️","🚂","🚃","🚄","🚅","🚆","🚇","🚈","🚊","🚋","🚞","🚠","🚡","🛶"] },
+  { label: "Objects", emojis: ["⌚","📱","💻","⌨️","🖥️","🖨️","📷","📹","🎥","📞","☎️","📺","📻","🎙️","⏰","🕰️","⏳","📡","🔋","🔌","💡","🔦","🕯️","🧯","🛒","💰","💳","💎","⚖️","🔧","🔨","🪛","🧲","🪜","🧰","📦","📫","📬","✂️","📎","📐","📏","🖊️","✏️","🖍️","📝","📖","📚","🔑","🗝️","🔒","🔓"] },
+  { label: "Activities", emojis: ["⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🏓","🏸","🏒","🥅","⛳","🏹","🎣","🤿","🥊","🥋","🎿","⛷️","🏂","🛹","🛼","🎯","🪁","🎮","🕹️","🧩","🎨","🖌️","🎭","🎪","🎤","🎧","🎼","🎹","🥁","🎷","🎺","🎸","🪘","🎻","🎬","🏆","🥇","🥈","🥉","🏅","🎖️"] },
+  { label: "Faces & People", emojis: ["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","😊","😇","🥰","😍","🤩","😘","😋","😛","😜","🤪","😎","🤓","🧐","😏","🥳","😤","😠","😢","😭","😱","😴","🤔","🤗","🤫","🤭","👶","👧","🧒","👦","👩","🧑","👨","👵","🧓","👴","👸","🤴","🧙","🧚","🧜","🦸","🦹","👼"] },
+  { label: "Symbols", emojis: ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","☮️","✝️","☪️","🕉️","☯️","✡️","🔯","♻️","⚠️","🚫","❌","⭕","✅","❓","❗","💯","🔴","🟠","🟡","🟢","🔵","🟣","🟤","⚫","⚪","🟥","🟧","🟨","🟩","🟦","🟪","🟫","⬛","⬜","💢","💥","💦","💨","🕳️","💣","🎉","🎊"] },
+];
+
 const CATEGORIES = [
   { key: "words", label: "2-Letter Words" },
   { key: "words3", label: "3-Letter Words" },
@@ -32,6 +43,7 @@ export default function AdminPage() {
   const [say, setSay] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
 
   const fetchItems = useCallback(async () => {
     const res = await fetch(`/api/words?category=${category}`);
@@ -166,12 +178,22 @@ export default function AdminPage() {
             </div>
             <div className={styles.field}>
               <label>Emoji</label>
-              <input
-                type="text"
-                placeholder="e.g. 🎮"
-                value={emoji}
-                onChange={(e) => setEmoji(e.target.value)}
-              />
+              <div className={styles.emojiInputRow}>
+                <input
+                  type="text"
+                  placeholder="e.g. 🎮"
+                  value={emoji}
+                  onChange={(e) => setEmoji(e.target.value)}
+                  readOnly
+                />
+                <button
+                  type="button"
+                  className={styles.pickerToggle}
+                  onClick={() => setShowPicker(!showPicker)}
+                >
+                  {showPicker ? "Close" : "Pick"}
+                </button>
+              </div>
             </div>
             <div className={styles.field}>
               <label>Pronunciation</label>
@@ -183,6 +205,29 @@ export default function AdminPage() {
               />
             </div>
           </div>
+
+          {showPicker && (
+            <div className={styles.emojiPicker}>
+              {EMOJI_GROUPS.map((group) => (
+                <div key={group.label} className={styles.emojiGroup}>
+                  <span className={styles.emojiGroupLabel}>{group.label}</span>
+                  <div className={styles.emojiGrid}>
+                    {group.emojis.map((e) => (
+                      <button
+                        key={e}
+                        type="button"
+                        className={`${styles.emojiBtn} ${emoji === e ? styles.selected : ""}`}
+                        onClick={() => { setEmoji(e); setShowPicker(false); }}
+                      >
+                        {e}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <button type="submit" disabled={loading} className={styles.addBtn}>
             {loading ? "Adding..." : "Add Word"}
           </button>
