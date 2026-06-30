@@ -12,7 +12,15 @@ const TABS: { mode: Mode; icon: string; label: string }[] = [
   { mode: "words4", icon: "📝", label: "4-Letter" },
   { mode: "letters", icon: "🔤", label: "Letters" },
   { mode: "numbers", icon: "🔢", label: "1-10" },
-  { mode: "numbers2", icon: "🔢", label: "11-20" },
+  { mode: "num11", icon: "🔢", label: "11-20" },
+  { mode: "num21", icon: "🔢", label: "21-30" },
+  { mode: "num31", icon: "🔢", label: "31-40" },
+  { mode: "num41", icon: "🔢", label: "41-50" },
+  { mode: "num51", icon: "🔢", label: "51-60" },
+  { mode: "num61", icon: "🔢", label: "61-70" },
+  { mode: "num71", icon: "🔢", label: "71-80" },
+  { mode: "num81", icon: "🔢", label: "81-90" },
+  { mode: "num91", icon: "💯", label: "91-100" },
   { mode: "fruits", icon: "🍎", label: "Fruits" },
 ];
 
