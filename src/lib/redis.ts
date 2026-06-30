@@ -1,0 +1,17 @@
+export const CATEGORIES = [
+  { key: "words", label: "2-Letter Words" },
+  { key: "words3", label: "3-Letter Words" },
+  { key: "words4", label: "4-Letter Words" },
+  { key: "letters", label: "Letters" },
+  { key: "numbers", label: "1-10" },
+  { key: "num11", label: "11-20" },
+  { key: "num21", label: "21-30" },
+  { key: "num31", label: "31-40" },
+  { key: "num41", label: "41-50" },
+  { key: "num51", label: "51-60" },
+  { key: "num61", label: "61-70" },
+  { key: "num71", label: "71-80" },
+  { key: "num81", label: "81-90" },
+  { key: "num91", label: "91-100" },
+  { key: "fruits", label: "Fruits" },
+] as const;

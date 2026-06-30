@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { getDataForMode, type Mode } from "@/data/cardData";
+import { getDataForMode, type Mode, type CardItem } from "@/data/cardData";
 import { preloadAudio, speak } from "@/lib/speech";
 import LearnerCard from "@/components/LearnerCard";
 import styles from "./page.module.scss";
@@ -41,6 +41,7 @@ export default function Home() {
   const [spellMode, setSpellMode] = useState(false);
   const [toastText, setToastText] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
+  const [customItems, setCustomItems] = useState<CardItem[]>([]);
   const volumeRef = useRef(1.0);
   const busyRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -64,7 +65,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const data = getDataForMode(mode);
+    fetch(`/api/words?category=${mode}`)
+      .then((r) => r.json())
+      .then((items: CardItem[]) => setCustomItems(items))
+      .catch(() => setCustomItems([]));
+  }, [mode]);
+
+  useEffect(() => {
+    const data = [...getDataForMode(mode), ...customItems];
     const texts = data.map((d) => d.say);
     if (mode === "words" || mode === "words3" || mode === "words4") {
       const letters = new Set<string>();
@@ -72,7 +80,7 @@ export default function Home() {
       texts.push(...letters);
     }
     preloadAudio(texts);
-  }, [mode]);
+  }, [mode, customItems]);
 
   const showToast = useCallback((text: string) => {
     setToastText(text);
@@ -170,7 +178,7 @@ export default function Home() {
     [showToast, launchConfetti]
   );
 
-  const data = getDataForMode(mode);
+  const data = [...getDataForMode(mode), ...customItems];
 
   return (
     <>
