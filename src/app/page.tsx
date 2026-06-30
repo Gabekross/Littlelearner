@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { getDataForMode, type Mode, type CardItem } from "@/data/cardData";
 import { preloadAudio, speak } from "@/lib/speech";
 import LearnerCard from "@/components/LearnerCard";
+import ColorCard from "@/components/ColorCard";
 import styles from "./page.module.scss";
 
 const TABS: { mode: Mode; icon: string; label: string }[] = [
@@ -22,6 +23,7 @@ const TABS: { mode: Mode; icon: string; label: string }[] = [
   { mode: "num81", icon: "🔢", label: "81-90" },
   { mode: "num91", icon: "💯", label: "91-100" },
   { mode: "fruits", icon: "🍎", label: "Fruits" },
+  { mode: "colors", icon: "🎨", label: "Colors" },
 ];
 
 interface Particle {
@@ -42,6 +44,7 @@ export default function Home() {
   const [toastText, setToastText] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
   const [customItems, setCustomItems] = useState<CardItem[]>([]);
+  const [revealedColor, setRevealedColor] = useState<string | null>(null);
   const volumeRef = useRef(1.0);
   const busyRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -222,7 +225,7 @@ export default function Home() {
           <button
             key={t.mode}
             className={`${styles.tabBtn} ${mode === t.mode ? styles.active : ""}`}
-            onClick={() => setMode(t.mode)}
+            onClick={() => { setMode(t.mode); setRevealedColor(null); }}
           >
             {t.icon} {t.label}
           </button>
@@ -230,9 +233,22 @@ export default function Home() {
       </div>
 
       <div className={styles.grid}>
-        {data.map((item, i) => (
-          <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3" || mode === "words4")} onSpeak={handleSpeak} />
-        ))}
+        {mode === "colors" ? (
+          data.map((item, i) => (
+            <ColorCard
+              key={`colors-${item.word}`}
+              item={item}
+              index={i}
+              revealed={revealedColor === item.word}
+              onReveal={(word) => setRevealedColor(word)}
+              onSpeak={handleSpeak}
+            />
+          ))
+        ) : (
+          data.map((item, i) => (
+            <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3" || mode === "words4")} onSpeak={handleSpeak} />
+          ))
+        )}
       </div>
 
       <div className={`${styles.toast} ${toastVisible ? styles.show : ""}`}>

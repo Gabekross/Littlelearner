@@ -3,6 +3,7 @@ export interface CardItem {
   emoji: string;
   say: string;
   image?: string;
+  color?: string;
 }
 
 export const WORDS: CardItem[] = [
@@ -281,12 +282,35 @@ export const WORDS4: CardItem[] = [
   { word: "WISH", emoji: "🌠", say: "wish" },
 ];
 
+export const COLORS: CardItem[] = [
+  { word: "RED", emoji: "🔴", say: "red", color: "#FF4444" },
+  { word: "BLUE", emoji: "🔵", say: "blue", color: "#4488FF" },
+  { word: "GREEN", emoji: "🟢", say: "green", color: "#44BB44" },
+  { word: "YELLOW", emoji: "🟡", say: "yellow", color: "#FFD700" },
+  { word: "ORANGE", emoji: "🟠", say: "orange", color: "#FF8C00" },
+  { word: "PURPLE", emoji: "🟣", say: "purple", color: "#9944CC" },
+  { word: "PINK", emoji: "💗", say: "pink", color: "#FF69B4" },
+  { word: "BROWN", emoji: "🟤", say: "brown", color: "#8B5A2B" },
+  { word: "BLACK", emoji: "⚫", say: "black", color: "#222222" },
+  { word: "WHITE", emoji: "⚪", say: "white", color: "#F0F0F0" },
+  { word: "GRAY", emoji: "🩶", say: "gray", color: "#999999" },
+  { word: "GOLD", emoji: "✨", say: "gold", color: "#FFB800" },
+  { word: "SILVER", emoji: "🪩", say: "silver", color: "#C0C0C0" },
+  { word: "TEAL", emoji: "💎", say: "teal", color: "#008080" },
+  { word: "NAVY", emoji: "🫐", say: "navy", color: "#000080" },
+  { word: "LIME", emoji: "🍈", say: "lime", color: "#32CD32" },
+  { word: "CORAL", emoji: "🪸", say: "coral", color: "#FF6F61" },
+  { word: "PEACH", emoji: "🍑", say: "peach", color: "#FFCBA4" },
+  { word: "SKY BLUE", emoji: "🩵", say: "sky blue", color: "#87CEEB" },
+  { word: "MAROON", emoji: "🫀", say: "maroon", color: "#800020" },
+];
+
 export type Mode =
   | "words" | "words3" | "words4"
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
-  | "fruits";
+  | "fruits" | "colors";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
@@ -305,5 +329,6 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "num81":    return NUMBERS_81_90;
     case "num91":    return NUMBERS_91_100;
     case "fruits":   return FRUITS;
+    case "colors":   return COLORS;
   }
 }
