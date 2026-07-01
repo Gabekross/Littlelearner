@@ -282,6 +282,24 @@ export const WORDS4: CardItem[] = [
   { word: "WISH", emoji: "🌠", say: "wish" },
 ];
 
+export const BODY_PARTS: CardItem[] = [
+  { word: "HEAD", emoji: "🧠", say: "head" },
+  { word: "HAIR", emoji: "💇", say: "hair" },
+  { word: "EYES", emoji: "👀", say: "eyes" },
+  { word: "NOSE", emoji: "👃", say: "nose" },
+  { word: "MOUTH", emoji: "👄", say: "mouth" },
+  { word: "EARS", emoji: "👂", say: "ears" },
+  { word: "NECK", emoji: "🦒", say: "neck" },
+  { word: "SHOULDERS", emoji: "💪", say: "shoulders" },
+  { word: "CHEST", emoji: "🫁", say: "chest" },
+  { word: "TUMMY", emoji: "😋", say: "tummy" },
+  { word: "ARMS", emoji: "💪", say: "arms" },
+  { word: "HANDS", emoji: "🖐️", say: "hands" },
+  { word: "LEGS", emoji: "🦵", say: "legs" },
+  { word: "KNEES", emoji: "🦿", say: "knees" },
+  { word: "FEET", emoji: "🦶", say: "feet" },
+];
+
 export const COLORS: CardItem[] = [
   { word: "RED", emoji: "🔴", say: "red", color: "#FF4444" },
   { word: "BLUE", emoji: "🔵", say: "blue", color: "#4488FF" },
@@ -310,7 +328,7 @@ export type Mode =
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
-  | "fruits" | "colors";
+  | "fruits" | "colors" | "body";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
@@ -330,5 +348,6 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "num91":    return NUMBERS_91_100;
     case "fruits":   return FRUITS;
     case "colors":   return COLORS;
+    case "body":     return BODY_PARTS;
   }
 }

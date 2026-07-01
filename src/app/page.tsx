@@ -5,6 +5,7 @@ import { getDataForMode, type Mode, type CardItem } from "@/data/cardData";
 import { preloadAudio, speak } from "@/lib/speech";
 import LearnerCard from "@/components/LearnerCard";
 import ColorCard from "@/components/ColorCard";
+import BodyDiagram from "@/components/BodyDiagram";
 import styles from "./page.module.scss";
 
 const TABS: { mode: Mode; icon: string; label: string }[] = [
@@ -24,6 +25,7 @@ const TABS: { mode: Mode; icon: string; label: string }[] = [
   { mode: "num91", icon: "💯", label: "91-100" },
   { mode: "fruits", icon: "🍎", label: "Fruits" },
   { mode: "colors", icon: "🎨", label: "Colors" },
+  { mode: "body", icon: "🧍", label: "Body" },
 ];
 
 interface Particle {
@@ -232,24 +234,28 @@ export default function Home() {
         ))}
       </div>
 
-      <div className={styles.grid}>
-        {mode === "colors" ? (
-          data.map((item, i) => (
-            <ColorCard
-              key={`colors-${item.word}`}
-              item={item}
-              index={i}
-              revealed={revealedColor === item.word}
-              onReveal={(word) => setRevealedColor(word)}
-              onSpeak={handleSpeak}
-            />
-          ))
-        ) : (
-          data.map((item, i) => (
-            <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3" || mode === "words4")} onSpeak={handleSpeak} />
-          ))
-        )}
-      </div>
+      {mode === "body" ? (
+        <BodyDiagram onSpeak={handleSpeak} />
+      ) : (
+        <div className={styles.grid}>
+          {mode === "colors" ? (
+            data.map((item, i) => (
+              <ColorCard
+                key={`colors-${item.word}`}
+                item={item}
+                index={i}
+                revealed={revealedColor === item.word}
+                onReveal={(word) => setRevealedColor(word)}
+                onSpeak={handleSpeak}
+              />
+            ))
+          ) : (
+            data.map((item, i) => (
+              <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3" || mode === "words4")} onSpeak={handleSpeak} />
+            ))
+          )}
+        </div>
+      )}
 
       <div className={`${styles.toast} ${toastVisible ? styles.show : ""}`}>
         🔊 {toastText}

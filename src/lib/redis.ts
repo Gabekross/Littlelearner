@@ -15,4 +15,5 @@ export const CATEGORIES = [
   { key: "num91", label: "91-100" },
   { key: "fruits", label: "Fruits" },
   { key: "colors", label: "Colors" },
+  { key: "body", label: "Body Parts" },
 ] as const;
