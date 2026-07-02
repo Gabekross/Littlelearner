@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Story } from "@/data/stories";
 
 function getRedis() {
   if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) return null;
@@ -17,14 +18,14 @@ export async function GET(request: NextRequest) {
   if (!redis) return NextResponse.json([]);
 
   if (ageGroup) {
-    const stories = await redis.get<string>(`stories:${ageGroup}`);
-    return NextResponse.json(stories ? JSON.parse(stories) : []);
+    const stories = (await redis.get<Story[]>(`stories:${ageGroup}`)) ?? [];
+    return NextResponse.json(stories);
   }
 
-  const all = [];
+  const all: Story[] = [];
   for (const ag of ["3-4", "4-6", "7-9"]) {
-    const stories = await redis.get<string>(`stories:${ag}`);
-    if (stories) all.push(...JSON.parse(stories));
+    const stories = (await redis.get<Story[]>(`stories:${ag}`)) ?? [];
+    all.push(...stories);
   }
   return NextResponse.json(all);
 }
@@ -39,15 +40,15 @@ export async function POST(request: NextRequest) {
   const redis = getRedis();
   if (!redis) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
 
-  const story = await request.json();
+  const story: Story = await request.json();
   if (!story.id || !story.title || !story.body || !story.ageGroup) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const existing = await redis.get<string>(`stories:${story.ageGroup}`);
-  const stories = existing ? JSON.parse(existing) : [];
-  stories.push(story);
-  await redis.set(`stories:${story.ageGroup}`, JSON.stringify(stories));
+  const key = `stories:${story.ageGroup}`;
+  const existing = (await redis.get<Story[]>(key)) ?? [];
+  existing.push(story);
+  await redis.set(key, existing);
 
   return NextResponse.json({ success: true });
 }
@@ -63,11 +64,10 @@ export async function DELETE(request: NextRequest) {
   if (!redis) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
 
   const { id, ageGroup } = await request.json();
-  const existing = await redis.get<string>(`stories:${ageGroup}`);
-  if (!existing) return NextResponse.json({ success: true });
-
-  const stories = JSON.parse(existing).filter((s: { id: string }) => s.id !== id);
-  await redis.set(`stories:${ageGroup}`, JSON.stringify(stories));
+  const key = `stories:${ageGroup}`;
+  const existing = (await redis.get<Story[]>(key)) ?? [];
+  const filtered = existing.filter((s) => s.id !== id);
+  await redis.set(key, filtered);
 
   return NextResponse.json({ success: true });
 }
