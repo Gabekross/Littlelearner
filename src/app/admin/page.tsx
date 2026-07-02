@@ -57,6 +57,19 @@ export default function AdminPage() {
   const [storyIllustrations, setStoryIllustrations] = useState<string[]>([]);
   const [customStories, setCustomStories] = useState<Story[]>([]);
   const [storySaving, setStorySaving] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState("");
+  const [voicePreviewText] = useState("Hello! I am your story reader.");
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) setAvailableVoices(voices);
+    };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    return () => { window.speechSynthesis.onvoiceschanged = null; };
+  }, []);
 
   const fetchStories = useCallback(async () => {
     const res = await fetch("/api/stories");
@@ -78,6 +91,10 @@ export default function AdminPage() {
         .then((r) => r.json())
         .then((data) => { if (data.value) setFadeDuration(Number(data.value)); })
         .catch(() => {});
+      fetch("/api/settings?key=storyVoice")
+        .then((r) => r.json())
+        .then((data) => { if (data.value) setSelectedVoice(data.value); })
+        .catch(() => {});
     }
   }, [authenticated, fetchItems, fetchStories]);
 
@@ -97,6 +114,29 @@ export default function AdminPage() {
       body: JSON.stringify({ key: "bodyFadeDuration", value: val }),
     });
     showMessage(`Photo display duration set to ${val}s`);
+  };
+
+  const handleSaveVoice = async (voiceName: string) => {
+    setSelectedVoice(voiceName);
+    await fetch("/api/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-password": password,
+      },
+      body: JSON.stringify({ key: "storyVoice", value: voiceName }),
+    });
+    showMessage(voiceName ? `Voice set to "${voiceName}"` : "Voice reset to default");
+  };
+
+  const handlePreviewVoice = (voiceName: string) => {
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(voicePreviewText);
+    const voice = availableVoices.find((v) => v.name === voiceName);
+    if (voice) utt.voice = voice;
+    utt.rate = 0.85;
+    utt.pitch = 1.1;
+    window.speechSynthesis.speak(utt);
   };
 
   const toggleIllustration = (id: string) => {
@@ -286,6 +326,39 @@ export default function AdminPage() {
               <span>10s</span>
             </div>
           </div>
+        </div>
+
+        <div className={styles.addForm}>
+          <h2>Story Voice Settings</h2>
+          <div className={styles.field}>
+            <label>Read Aloud Voice</label>
+            <div className={styles.voicePickerRow}>
+              <select
+                value={selectedVoice}
+                onChange={(e) => handleSaveVoice(e.target.value)}
+                className={styles.select}
+              >
+                <option value="">System Default</option>
+                {availableVoices.map((v) => (
+                  <option key={v.name} value={v.name}>
+                    {v.name} {v.lang ? `(${v.lang})` : ""}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className={styles.previewBtn}
+                onClick={() => handlePreviewVoice(selectedVoice)}
+              >
+                🔊 Preview
+              </button>
+            </div>
+          </div>
+          {availableVoices.length > 0 && (
+            <div className={styles.voiceHint}>
+              Tip: Try voices with &quot;child&quot;, &quot;female&quot;, or high pitch for a kid-friendly sound.
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleAddStory} className={styles.addForm}>

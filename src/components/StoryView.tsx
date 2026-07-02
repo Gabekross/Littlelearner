@@ -29,6 +29,8 @@ export default function StoryView() {
   const [ageGroup, setAgeGroup] = useState<AgeGroup>("3-4");
   const [customStories, setCustomStories] = useState<Story[]>([]);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
+  const [savedVoiceName, setSavedVoiceName] = useState("");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
@@ -39,8 +41,20 @@ export default function StoryView() {
   }, [ageGroup]);
 
   useEffect(() => {
+    fetch("/api/settings?key=storyVoice")
+      .then((r) => r.json())
+      .then((data) => { if (data.value) setSavedVoiceName(data.value); })
+      .catch(() => {});
+
+    const loadVoices = () => {
+      const v = window.speechSynthesis.getVoices();
+      if (v.length > 0) setVoices(v);
+    };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
     return () => {
       window.speechSynthesis.cancel();
+      window.speechSynthesis.onvoiceschanged = null;
     };
   }, []);
 
@@ -60,6 +74,12 @@ export default function StoryView() {
 
     const text = `${story.title}. ${story.body}`;
     const utt = new SpeechSynthesisUtterance(text);
+
+    if (savedVoiceName && voices.length > 0) {
+      const voice = voices.find((v) => v.name === savedVoiceName);
+      if (voice) utt.voice = voice;
+    }
+
     utt.rate = ageGroup === "3-4" ? 0.75 : ageGroup === "4-6" ? 0.85 : 0.9;
     utt.pitch = 1.1;
     utt.onend = () => setSpeakingId(null);
