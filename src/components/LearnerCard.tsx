@@ -116,7 +116,6 @@ export default function LearnerCard({ item, index, spellFirst, onSpeak }: Props)
           <div ref={waveRef} className={styles.soundWave}>
             <span /><span /><span /><span /><span />
           </div>
-          <div className={styles.hint}>tap me!</div>
         </div>
       </div>
     </div>

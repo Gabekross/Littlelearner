@@ -9,26 +9,71 @@ import BodyDiagram from "@/components/BodyDiagram";
 import StoryView from "@/components/StoryView";
 import styles from "./page.module.scss";
 
-const TABS: { mode: Mode; icon: string; label: string }[] = [
-  { mode: "words", icon: "🗣️", label: "Words" },
-  { mode: "words3", icon: "📖", label: "3-Letter" },
-  { mode: "words4", icon: "📝", label: "4-Letter" },
-  { mode: "letters", icon: "🔤", label: "Letters" },
-  { mode: "numbers", icon: "🔢", label: "1-10" },
-  { mode: "num11", icon: "🔢", label: "11-20" },
-  { mode: "num21", icon: "🔢", label: "21-30" },
-  { mode: "num31", icon: "🔢", label: "31-40" },
-  { mode: "num41", icon: "🔢", label: "41-50" },
-  { mode: "num51", icon: "🔢", label: "51-60" },
-  { mode: "num61", icon: "🔢", label: "61-70" },
-  { mode: "num71", icon: "🔢", label: "71-80" },
-  { mode: "num81", icon: "🔢", label: "81-90" },
-  { mode: "num91", icon: "💯", label: "91-100" },
-  { mode: "fruits", icon: "🍎", label: "Fruits" },
-  { mode: "colors", icon: "🎨", label: "Colors" },
-  { mode: "body", icon: "🧍", label: "Body" },
-  { mode: "stories", icon: "📖", label: "Stories" },
+interface CategoryTab {
+  key: string;
+  icon: string;
+  label: string;
+  modes: { mode: Mode; label: string }[];
+}
+
+const CATEGORIES: CategoryTab[] = [
+  {
+    key: "words",
+    icon: "🗣️",
+    label: "Words",
+    modes: [
+      { mode: "words", label: "2-Letter" },
+      { mode: "words3", label: "3-Letter" },
+      { mode: "words4", label: "4-Letter" },
+    ],
+  },
+  {
+    key: "letters",
+    icon: "🔤",
+    label: "ABC",
+    modes: [{ mode: "letters", label: "Letters" }],
+  },
+  {
+    key: "numbers",
+    icon: "🔢",
+    label: "123",
+    modes: [
+      { mode: "numbers", label: "1-10" },
+      { mode: "num11", label: "11-20" },
+      { mode: "num21", label: "21-30" },
+      { mode: "num31", label: "31-40" },
+      { mode: "num41", label: "41-50" },
+      { mode: "num51", label: "51-60" },
+      { mode: "num61", label: "61-70" },
+      { mode: "num71", label: "71-80" },
+      { mode: "num81", label: "81-90" },
+      { mode: "num91", label: "91-100" },
+    ],
+  },
+  {
+    key: "explore",
+    icon: "🌈",
+    label: "Explore",
+    modes: [
+      { mode: "fruits", label: "Fruits" },
+      { mode: "colors", label: "Colors" },
+      { mode: "body", label: "Body" },
+    ],
+  },
+  {
+    key: "stories",
+    icon: "📖",
+    label: "Stories",
+    modes: [{ mode: "stories", label: "Stories" }],
+  },
 ];
+
+function getCategoryForMode(mode: Mode): string {
+  for (const cat of CATEGORIES) {
+    if (cat.modes.some((m) => m.mode === mode)) return cat.key;
+  }
+  return "words";
+}
 
 interface Particle {
   x: number;
@@ -51,6 +96,7 @@ export default function Home() {
   const [revealedColor, setRevealedColor] = useState<string | null>(null);
   const [photoMode, setPhotoMode] = useState(false);
   const [fadeDuration, setFadeDuration] = useState(4);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const volumeRef = useRef(1.0);
   const busyRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -59,6 +105,10 @@ export default function Home() {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const activeWaveRef = useRef<HTMLDivElement | null>(null);
   const activeCardRef = useRef<HTMLDivElement | null>(null);
+
+  const activeCategory = getCategoryForMode(mode);
+  const activeCat = CATEGORIES.find((c) => c.key === activeCategory)!;
+  const showSubTabs = activeCat.modes.length > 1;
 
   useEffect(() => {
     const resizeCanvas = () => {
@@ -194,6 +244,11 @@ export default function Home() {
     [showToast, launchConfetti]
   );
 
+  const handleCategoryClick = (cat: CategoryTab) => {
+    setRevealedColor(null);
+    setMode(cat.modes[0].mode);
+  };
+
   const data = [...getDataForMode(mode), ...customItems];
 
   return (
@@ -201,63 +256,86 @@ export default function Home() {
       <div className={styles.stars} />
       <canvas ref={canvasRef} className={styles.confettiCanvas} />
 
-      <header className={styles.header}>
-        <h1>Little Learner Cards</h1>
-        <p>Tap any card to hear the sound!</p>
-      </header>
-
-      <div className={styles.volBar}>
-        <label>🔈</label>
-        <input
-          type="range"
-          min="0.1"
-          max="1"
-          step="0.05"
-          defaultValue="1"
-          onChange={(e) => {
-            volumeRef.current = parseFloat(e.target.value);
-          }}
-        />
-        <label>🔊</label>
+      <div className={styles.topBar}>
+        <h1 className={styles.logo}>Little Learner</h1>
+        <button
+          className={styles.settingsBtn}
+          onClick={() => setSettingsOpen(!settingsOpen)}
+          aria-label="Settings"
+        >
+          ⚙️
+        </button>
       </div>
 
-      <div className={styles.spellToggle}>
-        <label className={styles.toggleLabel}>
-          <span>Spell Mode</span>
-          <input
-            type="checkbox"
-            checked={spellMode}
-            onChange={(e) => setSpellMode(e.target.checked)}
-          />
-          <span className={styles.toggleSlider} />
-        </label>
-      </div>
-
-      <div className={styles.tabs}>
-        {TABS.map((t) => (
-          <button
-            key={t.mode}
-            className={`${styles.tabBtn} ${mode === t.mode ? styles.active : ""}`}
-            onClick={() => { setMode(t.mode); setRevealedColor(null); }}
-          >
-            {t.icon} {t.label}
-          </button>
-        ))}
-      </div>
-
-      {mode === "body" && (
-        <div className={styles.spellToggle}>
-          <label className={styles.toggleLabel}>
-            <span>Photo Mode</span>
+      {settingsOpen && (
+        <div className={styles.settingsPanel}>
+          <div className={styles.settingRow}>
+            <label>🔈</label>
             <input
-              type="checkbox"
-              checked={photoMode}
-              onChange={(e) => setPhotoMode(e.target.checked)}
+              type="range"
+              min="0.1"
+              max="1"
+              step="0.05"
+              defaultValue="1"
+              onChange={(e) => { volumeRef.current = parseFloat(e.target.value); }}
             />
-            <span className={styles.toggleSlider} />
-          </label>
+            <label>🔊</label>
+          </div>
+          <div className={styles.settingRow}>
+            <label className={styles.toggleLabel}>
+              <span>Spell Mode</span>
+              <input
+                type="checkbox"
+                checked={spellMode}
+                onChange={(e) => setSpellMode(e.target.checked)}
+              />
+              <span className={styles.toggleSlider} />
+            </label>
+          </div>
+          {mode === "body" && (
+            <div className={styles.settingRow}>
+              <label className={styles.toggleLabel}>
+                <span>Photo Mode</span>
+                <input
+                  type="checkbox"
+                  checked={photoMode}
+                  onChange={(e) => setPhotoMode(e.target.checked)}
+                />
+                <span className={styles.toggleSlider} />
+              </label>
+            </div>
+          )}
         </div>
       )}
+
+      <nav className={styles.nav}>
+        <div className={styles.categoryTabs}>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.key}
+              className={`${styles.catBtn} ${activeCategory === cat.key ? styles.active : ""}`}
+              onClick={() => handleCategoryClick(cat)}
+            >
+              <span className={styles.catIcon}>{cat.icon}</span>
+              <span className={styles.catLabel}>{cat.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {showSubTabs && (
+          <div className={styles.subTabs}>
+            {activeCat.modes.map((m) => (
+              <button
+                key={m.mode}
+                className={`${styles.subBtn} ${mode === m.mode ? styles.subActive : ""}`}
+                onClick={() => { setMode(m.mode); setRevealedColor(null); }}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </nav>
 
       {mode === "stories" ? (
         <StoryView />
