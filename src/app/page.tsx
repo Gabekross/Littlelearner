@@ -6,6 +6,7 @@ import { preloadAudio, speak } from "@/lib/speech";
 import LearnerCard from "@/components/LearnerCard";
 import ColorCard from "@/components/ColorCard";
 import BodyDiagram from "@/components/BodyDiagram";
+import StoryView from "@/components/StoryView";
 import styles from "./page.module.scss";
 
 const TABS: { mode: Mode; icon: string; label: string }[] = [
@@ -26,6 +27,7 @@ const TABS: { mode: Mode; icon: string; label: string }[] = [
   { mode: "fruits", icon: "🍎", label: "Fruits" },
   { mode: "colors", icon: "🎨", label: "Colors" },
   { mode: "body", icon: "🧍", label: "Body" },
+  { mode: "stories", icon: "📖", label: "Stories" },
 ];
 
 interface Particle {
@@ -257,7 +259,9 @@ export default function Home() {
         </div>
       )}
 
-      {mode === "body" ? (
+      {mode === "stories" ? (
+        <StoryView />
+      ) : mode === "body" ? (
         <BodyDiagram onSpeak={handleSpeak} photoMode={photoMode} fadeDuration={fadeDuration} />
       ) : (
         <div className={styles.grid}>

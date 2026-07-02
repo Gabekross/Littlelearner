@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { CardItem } from "@/data/cardData";
+import { FONT_OPTIONS, ILLUSTRATIONS, type Story, type AgeGroup, type FontFamily } from "@/data/stories";
 import styles from "./admin.module.scss";
 
 const EMOJI_GROUPS: { label: string; emojis: string[] }[] = [
@@ -48,6 +49,21 @@ export default function AdminPage() {
   const [showPicker, setShowPicker] = useState(false);
   const [fadeDuration, setFadeDuration] = useState(4);
 
+  const [storyTitle, setStoryTitle] = useState("");
+  const [storyBody, setStoryBody] = useState("");
+  const [storyAgeGroup, setStoryAgeGroup] = useState<AgeGroup>("3-4");
+  const [storyFont, setStoryFont] = useState<FontFamily>("fredoka");
+  const [storyColor, setStoryColor] = useState("#FFD700");
+  const [storyIllustrations, setStoryIllustrations] = useState<string[]>([]);
+  const [customStories, setCustomStories] = useState<Story[]>([]);
+  const [storySaving, setStorySaving] = useState(false);
+
+  const fetchStories = useCallback(async () => {
+    const res = await fetch("/api/stories");
+    const data = await res.json();
+    setCustomStories(Array.isArray(data) ? data : []);
+  }, []);
+
   const fetchItems = useCallback(async () => {
     const res = await fetch(`/api/words?category=${category}`);
     const data = await res.json();
@@ -57,12 +73,13 @@ export default function AdminPage() {
   useEffect(() => {
     if (authenticated) {
       fetchItems();
+      fetchStories();
       fetch("/api/settings?key=bodyFadeDuration")
         .then((r) => r.json())
         .then((data) => { if (data.value) setFadeDuration(Number(data.value)); })
         .catch(() => {});
     }
-  }, [authenticated, fetchItems]);
+  }, [authenticated, fetchItems, fetchStories]);
 
   const showMessage = (msg: string) => {
     setMessage(msg);
@@ -80,6 +97,70 @@ export default function AdminPage() {
       body: JSON.stringify({ key: "bodyFadeDuration", value: val }),
     });
     showMessage(`Photo display duration set to ${val}s`);
+  };
+
+  const toggleIllustration = (id: string) => {
+    setStoryIllustrations((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleAddStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!storyTitle.trim() || !storyBody.trim()) return;
+
+    setStorySaving(true);
+    const story: Story = {
+      id: `custom-${Date.now()}`,
+      title: storyTitle.trim(),
+      body: storyBody.trim(),
+      ageGroup: storyAgeGroup,
+      fontFamily: storyFont,
+      color: storyColor,
+      illustrations: storyIllustrations,
+    };
+
+    const res = await fetch("/api/stories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-password": password,
+      },
+      body: JSON.stringify(story),
+    });
+
+    setStorySaving(false);
+    if (res.ok) {
+      showMessage(`Story "${storyTitle}" added!`);
+      setStoryTitle("");
+      setStoryBody("");
+      setStoryIllustrations([]);
+      fetchStories();
+    } else if (res.status === 401) {
+      showMessage("Wrong password.");
+      setAuthenticated(false);
+    }
+  };
+
+  const handleDeleteStory = async (story: Story) => {
+    if (!confirm(`Delete story "${story.title}"?`)) return;
+
+    const res = await fetch("/api/stories", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-password": password,
+      },
+      body: JSON.stringify({ id: story.id, ageGroup: story.ageGroup }),
+    });
+
+    if (res.ok) {
+      showMessage(`Deleted "${story.title}"`);
+      fetchStories();
+    } else if (res.status === 401) {
+      showMessage("Wrong password.");
+      setAuthenticated(false);
+    }
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -206,6 +287,123 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+
+        <form onSubmit={handleAddStory} className={styles.addForm}>
+          <h2>Add Story</h2>
+
+          <div className={styles.storyFields}>
+            <div className={styles.field}>
+              <label>Age Group</label>
+              <select
+                value={storyAgeGroup}
+                onChange={(e) => setStoryAgeGroup(e.target.value as AgeGroup)}
+                className={styles.select}
+              >
+                <option value="3-4">Ages 3-4</option>
+                <option value="4-6">Ages 4-6</option>
+                <option value="7-9">Ages 7-9</option>
+              </select>
+            </div>
+
+            <div className={styles.field}>
+              <label>Title</label>
+              <input
+                type="text"
+                placeholder="e.g. The Magic Garden"
+                value={storyTitle}
+                onChange={(e) => setStoryTitle(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label>Story Text</label>
+              <textarea
+                className={styles.storyTextarea}
+                placeholder="Write your story here..."
+                rows={8}
+                value={storyBody}
+                onChange={(e) => setStoryBody(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.fontColorRow}>
+              <div className={styles.field}>
+                <label>Font Style</label>
+                <div className={styles.fontPicker}>
+                  {FONT_OPTIONS.map((f) => (
+                    <button
+                      key={f.key}
+                      type="button"
+                      className={`${styles.fontBtn} ${storyFont === f.key ? styles.selected : ""}`}
+                      style={{ fontFamily: f.css }}
+                      onClick={() => setStoryFont(f.key)}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.field}>
+                <label>Title Color</label>
+                <div className={styles.colorPicker}>
+                  {["#FFD700", "#FF4757", "#FF69B4", "#2ED573", "#4488FF", "#A855F7", "#FF8C00", "#00CEC9", "#FD79A8", "#6C5CE7"].map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      className={`${styles.colorBtn} ${storyColor === c ? styles.selectedColor : ""}`}
+                      style={{ background: c }}
+                      onClick={() => setStoryColor(c)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label>Illustrations (tap to add)</label>
+              <div className={styles.illustPicker}>
+                {ILLUSTRATIONS.map((illust) => (
+                  <button
+                    key={illust.id}
+                    type="button"
+                    className={`${styles.illustBtn} ${storyIllustrations.includes(illust.id) ? styles.selected : ""}`}
+                    onClick={() => toggleIllustration(illust.id)}
+                    title={illust.label}
+                  >
+                    <span dangerouslySetInnerHTML={{ __html: illust.svg }} />
+                    <span className={styles.illustLabel}>{illust.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" disabled={storySaving || !storyTitle.trim() || !storyBody.trim()} className={styles.addBtn}>
+            {storySaving ? "Saving..." : "Add Story"}
+          </button>
+        </form>
+
+        {customStories.length > 0 && (
+          <div className={styles.section}>
+            <h2>Custom Stories ({customStories.length})</h2>
+            <div className={styles.wordList}>
+              {customStories.map((story) => (
+                <div key={story.id} className={styles.wordItem}>
+                  <span className={styles.wordEmoji}>📖</span>
+                  <span className={styles.wordText} style={{ color: story.color }}>{story.title}</span>
+                  <span className={styles.wordSay}>(Ages {story.ageGroup})</span>
+                  <button
+                    onClick={() => handleDeleteStory(story)}
+                    className={styles.deleteBtn}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleAdd} className={styles.addForm}>
           <h2>Add New Word</h2>

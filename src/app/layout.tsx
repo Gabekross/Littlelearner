@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fredoka, Nunito } from "next/font/google";
+import { Fredoka, Nunito, Comic_Neue, Bubblegum_Sans, Patrick_Hand } from "next/font/google";
 import "./globals.scss";
 
 const fredoka = Fredoka({
@@ -12,6 +12,24 @@ const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
   weight: ["700", "800", "900"],
+});
+
+const comicNeue = Comic_Neue({
+  variable: "--font-comic-neue",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const bubblegumSans = Bubblegum_Sans({
+  variable: "--font-bubblegum",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+const patrickHand = Patrick_Hand({
+  variable: "--font-patrick-hand",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fredoka.variable} ${nunito.variable}`}>
+    <html lang="en" className={`${fredoka.variable} ${nunito.variable} ${comicNeue.variable} ${bubblegumSans.variable} ${patrickHand.variable}`}>
       <body>{children}</body>
     </html>
   );

@@ -343,6 +343,143 @@
   }
 }
 
+.storyFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.storyTextarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1rem;
+  font-family: var(--font-nunito), sans-serif;
+  outline: none;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    border-color: #ffd700;
+  }
+}
+
+.fontColorRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fontPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fontBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &.selected {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+  }
+}
+
+.colorPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.colorBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &.selectedColor {
+    border-color: #fff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  }
+}
+
+.illustPicker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.illustBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &.selected {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.12);
+  }
+
+  span:first-child {
+    width: 40px;
+    height: 40px;
+    display: block;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.illustLabel {
+  font-family: var(--font-nunito), sans-serif;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+}
+
 .addBtn {
   width: 100%;
   padding: 12px;
