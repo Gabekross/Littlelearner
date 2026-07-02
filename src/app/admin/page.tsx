@@ -46,6 +46,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showPicker, setShowPicker] = useState(false);
+  const [fadeDuration, setFadeDuration] = useState(4);
 
   const fetchItems = useCallback(async () => {
     const res = await fetch(`/api/words?category=${category}`);
@@ -54,12 +55,31 @@ export default function AdminPage() {
   }, [category]);
 
   useEffect(() => {
-    if (authenticated) fetchItems();
+    if (authenticated) {
+      fetchItems();
+      fetch("/api/settings?key=bodyFadeDuration")
+        .then((r) => r.json())
+        .then((data) => { if (data.value) setFadeDuration(Number(data.value)); })
+        .catch(() => {});
+    }
   }, [authenticated, fetchItems]);
 
   const showMessage = (msg: string) => {
     setMessage(msg);
     setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleSaveFadeDuration = async (val: number) => {
+    setFadeDuration(val);
+    await fetch("/api/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-password": password,
+      },
+      body: JSON.stringify({ key: "bodyFadeDuration", value: val }),
+    });
+    showMessage(`Photo display duration set to ${val}s`);
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -164,6 +184,27 @@ export default function AdminPage() {
               <option key={c.key} value={c.key}>{c.label}</option>
             ))}
           </select>
+        </div>
+
+        <div className={styles.addForm}>
+          <h2>Body Photo Settings</h2>
+          <div className={styles.field}>
+            <label>Photo Display Duration: {fadeDuration}s</label>
+            <input
+              type="range"
+              min="2"
+              max="10"
+              step="1"
+              value={fadeDuration}
+              onChange={(e) => handleSaveFadeDuration(Number(e.target.value))}
+              className={styles.rangeInput}
+            />
+            <div className={styles.rangeLabels}>
+              <span>2s</span>
+              <span>6s</span>
+              <span>10s</span>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleAdd} className={styles.addForm}>

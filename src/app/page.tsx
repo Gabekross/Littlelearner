@@ -47,6 +47,8 @@ export default function Home() {
   const [toastVisible, setToastVisible] = useState(false);
   const [customItems, setCustomItems] = useState<CardItem[]>([]);
   const [revealedColor, setRevealedColor] = useState<string | null>(null);
+  const [photoMode, setPhotoMode] = useState(false);
+  const [fadeDuration, setFadeDuration] = useState(4);
   const volumeRef = useRef(1.0);
   const busyRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -67,6 +69,13 @@ export default function Home() {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/settings?key=bodyFadeDuration")
+      .then((r) => r.json())
+      .then((data) => { if (data.value) setFadeDuration(Number(data.value)); })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -234,8 +243,22 @@ export default function Home() {
         ))}
       </div>
 
+      {mode === "body" && (
+        <div className={styles.spellToggle}>
+          <label className={styles.toggleLabel}>
+            <span>Photo Mode</span>
+            <input
+              type="checkbox"
+              checked={photoMode}
+              onChange={(e) => setPhotoMode(e.target.checked)}
+            />
+            <span className={styles.toggleSlider} />
+          </label>
+        </div>
+      )}
+
       {mode === "body" ? (
-        <BodyDiagram onSpeak={handleSpeak} />
+        <BodyDiagram onSpeak={handleSpeak} photoMode={photoMode} fadeDuration={fadeDuration} />
       ) : (
         <div className={styles.grid}>
           {mode === "colors" ? (
