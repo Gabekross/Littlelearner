@@ -21,17 +21,45 @@ export function speak(
   onEnd: () => void
 ) {
   let audio = audioCache.get(text);
+
   if (audio) {
-    audio.currentTime = 0;
-  } else {
+    // If the previous element is in a broken state, discard it and create fresh
+    if (audio.error) {
+      audioCache.delete(text);
+      audio = undefined;
+    } else {
+      audio.currentTime = 0;
+    }
+  }
+
+  if (!audio) {
     audio = new Audio(getTtsUrl(text));
     audioCache.set(text, audio);
   }
 
   audio.volume = volume;
-  audio.onplay = onStart;
-  audio.onended = onEnd;
-  audio.onerror = onEnd;
 
-  audio.play().catch(onEnd);
+  // Clean up listeners from any prior use
+  audio.onplay = null;
+  audio.onended = null;
+  audio.onerror = null;
+
+  let ended = false;
+  const finish = () => {
+    if (ended) return;
+    ended = true;
+    onEnd();
+  };
+
+  audio.onplay = onStart;
+  audio.onended = finish;
+  audio.onerror = () => {
+    audioCache.delete(text);
+    finish();
+  };
+
+  audio.play().catch(() => {
+    audioCache.delete(text);
+    finish();
+  });
 }
