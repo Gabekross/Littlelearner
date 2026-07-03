@@ -7,6 +7,7 @@ import LearnerCard from "@/components/LearnerCard";
 import ColorCard from "@/components/ColorCard";
 import BodyDiagram from "@/components/BodyDiagram";
 import StoryView from "@/components/StoryView";
+import OppositesView from "@/components/OppositesView";
 import styles from "./page.module.scss";
 
 interface CategoryTab {
@@ -58,6 +59,7 @@ const CATEGORIES: CategoryTab[] = [
       { mode: "fruits", label: "Fruits" },
       { mode: "colors", label: "Colors" },
       { mode: "body", label: "Body" },
+      { mode: "opposites", label: "Opposites" },
     ],
   },
   {
@@ -339,6 +341,8 @@ export default function Home() {
 
       {mode === "stories" ? (
         <StoryView />
+      ) : mode === "opposites" ? (
+        <OppositesView />
       ) : mode === "body" ? (
         <BodyDiagram onSpeak={handleSpeak} photoMode={photoMode} fadeDuration={fadeDuration} />
       ) : (

@@ -328,7 +328,7 @@ export type Mode =
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
-  | "fruits" | "colors" | "body" | "stories";
+  | "fruits" | "colors" | "body" | "stories" | "opposites";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
@@ -349,6 +349,7 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "fruits":   return FRUITS;
     case "colors":   return COLORS;
     case "body":     return BODY_PARTS;
-    case "stories":  return [];
+    case "stories":    return [];
+    case "opposites":  return [];
   }
 }
