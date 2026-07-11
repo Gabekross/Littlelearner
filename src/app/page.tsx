@@ -8,6 +8,8 @@ import ColorCard from "@/components/ColorCard";
 import BodyDiagram from "@/components/BodyDiagram";
 import StoryView from "@/components/StoryView";
 import OppositesView from "@/components/OppositesView";
+import ProfilePicker from "@/components/ProfilePicker";
+import type { Profile } from "@/app/api/profiles/route";
 import styles from "./page.module.scss";
 
 interface CategoryTab {
@@ -99,6 +101,9 @@ export default function Home() {
   const [photoMode, setPhotoMode] = useState(false);
   const [fadeDuration, setFadeDuration] = useState(4);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const volumeRef = useRef(1.0);
   const busyRef = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -123,6 +128,66 @@ export default function Home() {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
+
+  const trackSignIn = useCallback((profile: Profile) => {
+    // Count once per browser session so refreshes don't inflate the numbers
+    if (sessionStorage.getItem("ll-tracked") === profile.id) return;
+    sessionStorage.setItem("ll-tracked", profile.id);
+    fetch("/api/profiles", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: profile.id }),
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/profiles")
+      .then((r) => r.json())
+      .then((list: Profile[]) => {
+        if (!Array.isArray(list)) list = [];
+        setProfiles(list);
+        const savedId = localStorage.getItem("ll-profile-id");
+        const saved = list.find((p) => p.id === savedId);
+        if (saved) {
+          setActiveProfile(saved);
+          trackSignIn(saved);
+        } else if (localStorage.getItem("ll-profile-skipped") !== "1") {
+          setPickerOpen(true);
+        }
+      })
+      .catch(() => {});
+  }, [trackSignIn]);
+
+  const handleSelectProfile = useCallback((profile: Profile) => {
+    localStorage.setItem("ll-profile-id", profile.id);
+    localStorage.removeItem("ll-profile-skipped");
+    setActiveProfile(profile);
+    setPickerOpen(false);
+    sessionStorage.removeItem("ll-tracked");
+    trackSignIn(profile);
+  }, [trackSignIn]);
+
+  const handleCreateProfile = useCallback(async (name: string, emoji: string) => {
+    try {
+      const res = await fetch("/api/profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, emoji }),
+      });
+      if (!res.ok) return;
+      const profile: Profile = await res.json();
+      setProfiles((prev) => [...prev, profile]);
+      handleSelectProfile(profile);
+    } catch {
+      // no database configured — just close the picker
+      setPickerOpen(false);
+    }
+  }, [handleSelectProfile]);
+
+  const handleSkipProfile = useCallback(() => {
+    localStorage.setItem("ll-profile-skipped", "1");
+    setPickerOpen(false);
   }, []);
 
   useEffect(() => {
@@ -260,14 +325,39 @@ export default function Home() {
 
       <div className={styles.topBar}>
         <h1 className={styles.logo}>Little Learner</h1>
-        <button
-          className={styles.settingsBtn}
-          onClick={() => setSettingsOpen(!settingsOpen)}
-          aria-label="Settings"
-        >
-          ⚙️
-        </button>
+        <div className={styles.topBarRight}>
+          <button
+            className={styles.profileChip}
+            onClick={() => setPickerOpen(true)}
+            aria-label="Switch profile"
+          >
+            {activeProfile ? (
+              <>
+                <span>{activeProfile.emoji}</span>
+                <span className={styles.profileChipName}>{activeProfile.name}</span>
+              </>
+            ) : (
+              <span>👤</span>
+            )}
+          </button>
+          <button
+            className={styles.settingsBtn}
+            onClick={() => setSettingsOpen(!settingsOpen)}
+            aria-label="Settings"
+          >
+            ⚙️
+          </button>
+        </div>
       </div>
+
+      {pickerOpen && (
+        <ProfilePicker
+          profiles={profiles}
+          onSelect={handleSelectProfile}
+          onCreate={handleCreateProfile}
+          onSkip={handleSkipProfile}
+        />
+      )}
 
       {settingsOpen && (
         <div className={styles.settingsPanel}>

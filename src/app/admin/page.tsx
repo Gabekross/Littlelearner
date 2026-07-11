@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { CardItem } from "@/data/cardData";
 import { FONT_OPTIONS, ILLUSTRATIONS, type Story, type AgeGroup, type FontFamily } from "@/data/stories";
+import type { Profile } from "@/app/api/profiles/route";
 import styles from "./admin.module.scss";
 
 const EMOJI_GROUPS: { label: string; emojis: string[] }[] = [
@@ -60,6 +61,7 @@ export default function AdminPage() {
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState("");
   const [voicePreviewText] = useState("Hello! I am your story reader.");
+  const [profiles, setProfiles] = useState<Profile[]>([]);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -77,6 +79,12 @@ export default function AdminPage() {
     setCustomStories(Array.isArray(data) ? data : []);
   }, []);
 
+  const fetchProfiles = useCallback(async () => {
+    const res = await fetch("/api/profiles");
+    const data = await res.json();
+    setProfiles(Array.isArray(data) ? data : []);
+  }, []);
+
   const fetchItems = useCallback(async () => {
     const res = await fetch(`/api/words?category=${category}`);
     const data = await res.json();
@@ -87,6 +95,7 @@ export default function AdminPage() {
     if (authenticated) {
       fetchItems();
       fetchStories();
+      fetchProfiles();
       fetch("/api/settings?key=bodyFadeDuration")
         .then((r) => r.json())
         .then((data) => { if (data.value) setFadeDuration(Number(data.value)); })
@@ -96,7 +105,7 @@ export default function AdminPage() {
         .then((data) => { if (data.value) setSelectedVoice(data.value); })
         .catch(() => {});
     }
-  }, [authenticated, fetchItems, fetchStories]);
+  }, [authenticated, fetchItems, fetchStories, fetchProfiles]);
 
   const showMessage = (msg: string) => {
     setMessage(msg);
@@ -203,6 +212,27 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteProfile = async (profile: Profile) => {
+    if (!confirm(`Delete profile "${profile.name}"?`)) return;
+
+    const res = await fetch("/api/profiles", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-password": password,
+      },
+      body: JSON.stringify({ id: profile.id }),
+    });
+
+    if (res.ok) {
+      showMessage(`Deleted profile "${profile.name}"`);
+      fetchProfiles();
+    } else if (res.status === 401) {
+      showMessage("Wrong password.");
+      setAuthenticated(false);
+    }
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password.trim()) {
@@ -293,6 +323,36 @@ export default function AdminPage() {
         </div>
 
         {message && <div className={styles.toast}>{message}</div>}
+
+        <div className={styles.section}>
+          <h2>Kid Profiles ({profiles.length})</h2>
+          {profiles.length === 0 ? (
+            <p className={styles.empty}>No profiles yet. Kids create them from the app&apos;s welcome screen.</p>
+          ) : (
+            <div className={styles.wordList}>
+              {[...profiles]
+                .sort((a, b) => b.lastSeenAt - a.lastSeenAt)
+                .map((p) => (
+                  <div key={p.id} className={styles.wordItem}>
+                    <span className={styles.wordEmoji}>{p.emoji}</span>
+                    <span className={styles.wordText}>{p.name}</span>
+                    <span className={styles.wordSay}>
+                      {p.sessions} session{p.sessions === 1 ? "" : "s"} · last seen{" "}
+                      {new Date(p.lastSeenAt).toLocaleString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    <button onClick={() => handleDeleteProfile(p)} className={styles.deleteBtn}>
+                      Delete
+                    </button>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
 
         <div className={styles.section}>
           <label className={styles.label}>Category</label>

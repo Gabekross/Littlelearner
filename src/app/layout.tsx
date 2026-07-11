@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Nunito, Comic_Neue, Bubblegum_Sans, Patrick_Hand } from "next/font/google";
+import PwaRegister from "@/components/PwaRegister";
 import "./globals.scss";
 
 const fredoka = Fredoka({
@@ -45,6 +46,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   userScalable: false,
+  themeColor: "#0f0f2e",
 };
 
 export default function RootLayout({
@@ -54,7 +56,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${fredoka.variable} ${nunito.variable} ${comicNeue.variable} ${bubblegumSans.variable} ${patrickHand.variable}`}>
-      <body>{children}</body>
+      <body>
+        <PwaRegister />
+        {children}
+      </body>
     </html>
   );
 }
