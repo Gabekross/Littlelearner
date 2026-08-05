@@ -1,15 +1,17 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import type { CardItem } from "@/data/cardData";
-import { speak } from "@/lib/speech";
+import { cancelSpeech, speak } from "@/lib/speech";
 import styles from "./LearnerCard.module.scss";
 
 const colorClasses = [
   styles.color0, styles.color1, styles.color2, styles.color3, styles.color4,
   styles.color5, styles.color6, styles.color7, styles.color8, styles.color9,
 ];
+
+let activeSpellCancel: (() => void) | null = null;
 
 interface Props {
   item: CardItem;
@@ -23,19 +25,52 @@ export default function LearnerCard({ item, index, spellFirst, onSpeak }: Props)
   const waveRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
   const spellingRef = useRef(false);
+  const spellCancelRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (activeSpellCancel === spellCancelRef.current) activeSpellCancel?.();
+    };
+  }, []);
 
   const handleTap = useCallback(
     (e: React.MouseEvent | React.TouchEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (spellingRef.current) return;
       if (!card3dRef.current || !waveRef.current) return;
+
+      if (activeSpellCancel) activeSpellCancel();
 
       if (spellFirst && item.word.length > 1) {
         spellingRef.current = true;
         const card3d = card3dRef.current;
         const waveEl = waveRef.current;
         const letterSpans = wordRef.current?.querySelectorAll(`.${styles.letter}`);
+        const timers = new Set<ReturnType<typeof setTimeout>>();
+        let cancelled = false;
+
+        const schedule = (callback: () => void, delay: number) => {
+          const timer = setTimeout(() => {
+            timers.delete(timer);
+            if (!cancelled) callback();
+          }, delay);
+          timers.add(timer);
+        };
+
+        const cancelCurrentSpell = () => {
+          cancelled = true;
+          timers.forEach((timer) => clearTimeout(timer));
+          timers.clear();
+          cancelSpeech();
+          letterSpans?.forEach((span) => span.classList.remove(styles.pulse));
+          waveEl.classList.remove("playing");
+          card3d.classList.remove("speaking");
+          spellingRef.current = false;
+          if (activeSpellCancel === cancelCurrentSpell) activeSpellCancel = null;
+          if (spellCancelRef.current === cancelCurrentSpell) spellCancelRef.current = null;
+        };
+        activeSpellCancel = cancelCurrentSpell;
+        spellCancelRef.current = cancelCurrentSpell;
 
         waveEl.classList.add("playing");
         card3d.classList.add("speaking");
@@ -45,16 +80,21 @@ export default function LearnerCard({ item, index, spellFirst, onSpeak }: Props)
 
         const spellNext = () => {
           if (i < letters.length) {
-            if (letterSpans?.[i]) {
-              letterSpans[i].classList.add(styles.pulse);
-              setTimeout(() => letterSpans[i].classList.remove(styles.pulse), 500);
+            const letterSpan = letterSpans?.[i];
+            if (letterSpan) {
+              letterSpan.classList.add(styles.pulse);
+              schedule(() => letterSpan.classList.remove(styles.pulse), 500);
             }
             speak(letters[i], 1.0, () => {}, () => {
+              if (cancelled) return;
               i++;
-              setTimeout(spellNext, 150);
+              schedule(spellNext, 150);
             });
           } else {
-            setTimeout(() => {
+            schedule(() => {
+              if (cancelled) return;
+              if (activeSpellCancel === cancelCurrentSpell) activeSpellCancel = null;
+              if (spellCancelRef.current === cancelCurrentSpell) spellCancelRef.current = null;
               onSpeak(item.say, card3d, waveEl);
               spellingRef.current = false;
             }, 300);
