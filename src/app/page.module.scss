@@ -217,9 +217,14 @@
 
 .categoryTabs {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
   padding: 0 12px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar { display: none; }
 }
 
 .catBtn {
@@ -352,6 +357,10 @@
 }
 
 @media (min-width: 900px) {
+  .categoryTabs {
+    justify-content: center;
+  }
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }

@@ -338,12 +338,66 @@ export const SHAPES: CardItem[] = [
   { word: "HEXAGON", emoji: "", say: "hexagon", shape: "hexagon", shapeColor: "#22B8CF" },
 ];
 
+type ShapeKind = NonNullable<CardItem["shape"]>;
+
+const COLOR_SHAPE_COLORS = [
+  { word: "RED", say: "red", shapeColor: "#FF4444" },
+  { word: "YELLOW", say: "yellow", shapeColor: "#FFD700" },
+  { word: "GREEN", say: "green", shapeColor: "#44BB44" },
+  { word: "BLUE", say: "blue", shapeColor: "#4488FF" },
+  { word: "ORANGE", say: "orange", shapeColor: "#FF8C00" },
+  { word: "PURPLE", say: "purple", shapeColor: "#9944CC" },
+  { word: "PINK", say: "pink", shapeColor: "#FF69B4" },
+  { word: "BROWN", say: "brown", shapeColor: "#8B5A2B" },
+  { word: "BLACK", say: "black", shapeColor: "#222222" },
+  { word: "WHITE", say: "white", shapeColor: "#F0F0F0" },
+];
+
+const COLOR_SHAPE_LABELS: Record<ShapeKind, string> = {
+  circle: "CIRCLE",
+  square: "SQUARE",
+  triangle: "TRIANGLE",
+  rectangle: "RECTANGLE",
+  oval: "OVAL",
+  diamond: "DIAMOND",
+  star: "STAR",
+  heart: "HEART",
+  pentagon: "PENTAGON",
+  hexagon: "HEXAGON",
+};
+
+function makeColorShapes(shape: ShapeKind): CardItem[] {
+  const shapeWord = COLOR_SHAPE_LABELS[shape];
+  const shapeSay = shapeWord.toLowerCase();
+
+  return COLOR_SHAPE_COLORS.map((color) => ({
+    word: `${color.word} ${shapeWord}`,
+    emoji: "",
+    say: `${color.say} ${shapeSay}`,
+    shape,
+    shapeColor: color.shapeColor,
+  }));
+}
+
+export const COLOR_CIRCLES = makeColorShapes("circle");
+export const COLOR_SQUARES = makeColorShapes("square");
+export const COLOR_TRIANGLES = makeColorShapes("triangle");
+export const COLOR_RECTANGLES = makeColorShapes("rectangle");
+export const COLOR_OVALS = makeColorShapes("oval");
+export const COLOR_DIAMONDS = makeColorShapes("diamond");
+export const COLOR_STARS = makeColorShapes("star");
+export const COLOR_HEARTS = makeColorShapes("heart");
+export const COLOR_PENTAGONS = makeColorShapes("pentagon");
+export const COLOR_HEXAGONS = makeColorShapes("hexagon");
+
 export type Mode =
   | "words" | "words3" | "words4"
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
-  | "fruits" | "colors" | "shapes" | "body" | "stories" | "opposites";
+  | "fruits" | "colors" | "shapes" | "body" | "stories" | "opposites"
+  | "colorCircles" | "colorSquares" | "colorTriangles" | "colorRectangles" | "colorOvals"
+  | "colorDiamonds" | "colorStars" | "colorHearts" | "colorPentagons" | "colorHexagons";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
@@ -365,6 +419,16 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "colors":   return COLORS;
     case "shapes":   return SHAPES;
     case "body":     return BODY_PARTS;
+    case "colorCircles":    return COLOR_CIRCLES;
+    case "colorSquares":    return COLOR_SQUARES;
+    case "colorTriangles":  return COLOR_TRIANGLES;
+    case "colorRectangles": return COLOR_RECTANGLES;
+    case "colorOvals":      return COLOR_OVALS;
+    case "colorDiamonds":   return COLOR_DIAMONDS;
+    case "colorStars":      return COLOR_STARS;
+    case "colorHearts":     return COLOR_HEARTS;
+    case "colorPentagons":  return COLOR_PENTAGONS;
+    case "colorHexagons":   return COLOR_HEXAGONS;
     case "stories":    return [];
     case "opposites":  return [];
   }

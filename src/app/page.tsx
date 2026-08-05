@@ -67,6 +67,23 @@ const CATEGORIES: CategoryTab[] = [
     ],
   },
   {
+    key: "colorShapes",
+    icon: "CS",
+    label: "Color Shapes",
+    modes: [
+      { mode: "colorCircles", label: "Circle" },
+      { mode: "colorSquares", label: "Square" },
+      { mode: "colorTriangles", label: "Triangle" },
+      { mode: "colorRectangles", label: "Rectangle" },
+      { mode: "colorOvals", label: "Oval" },
+      { mode: "colorDiamonds", label: "Diamond" },
+      { mode: "colorStars", label: "Star" },
+      { mode: "colorHearts", label: "Heart" },
+      { mode: "colorPentagons", label: "Pentagon" },
+      { mode: "colorHexagons", label: "Hexagon" },
+    ],
+  },
+  {
     key: "stories",
     icon: "📖",
     label: "Stories",
@@ -118,6 +135,7 @@ export default function Home() {
   const activeCategory = getCategoryForMode(mode);
   const activeCat = CATEGORIES.find((c) => c.key === activeCategory)!;
   const showSubTabs = activeCat.modes.length > 1;
+  const showShapeCards = mode === "shapes" || activeCategory === "colorShapes";
 
   useEffect(() => {
     const resizeCanvas = () => {
@@ -450,10 +468,10 @@ export default function Home() {
                 onSpeak={handleSpeak}
               />
             ))
-          ) : mode === "shapes" ? (
+          ) : showShapeCards ? (
             data.map((item, i) => (
               <ShapeCard
-                key={`shapes-${item.word}`}
+                key={`${mode}-${item.word}`}
                 item={item}
                 index={i}
                 onSpeak={handleSpeak}
