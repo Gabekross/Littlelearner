@@ -229,6 +229,7 @@ export const WORDS3: CardItem[] = [
   { word: "OWL", emoji: "🦉", say: "owl" },
   { word: "VAN", emoji: "🚐", say: "van" },
   { word: "ZOO", emoji: "🦁", say: "zoo" },
+  { word: "SIT", emoji: "Aa", say: "sit" },
 ];
 
 export const WORDS4: CardItem[] = [
@@ -282,7 +283,45 @@ export const WORDS4: CardItem[] = [
   { word: "SWIM", emoji: "🏊", say: "swim" },
   { word: "TREE", emoji: "🌳", say: "tree" },
   { word: "WISH", emoji: "🌠", say: "wish" },
+  { word: "HELP", emoji: "Aa", say: "help" },
+  { word: "NAME", emoji: "Aa", say: "name" },
 ];
+
+function makeWordCards(words: string[]): CardItem[] {
+  return words.map((word) => ({
+    word: word.toUpperCase(),
+    emoji: "Aa",
+    say: word,
+  }));
+}
+
+export const WORDS5: CardItem[] = makeWordCards([
+  "uncle", "child", "niece", "water", "bread", "table", "chair", "house",
+  "apple", "smile", "sleep", "laugh", "stand", "dance", "clean", "share",
+  "build", "carry", "teach", "learn", "plant", "spoon", "plate", "brush",
+  "shirt", "shoes", "story", "music", "happy", "small", "brave", "sweet",
+]);
+
+export const WORDS6: CardItem[] = makeWordCards([
+  "mother", "father", "cousin", "nephew", "sister", "parent", "family", "school",
+  "friend", "animal", "bottle", "pencil", "window", "garden", "doctor", "dinner",
+  "cookie", "banana", "listen", "follow", "answer", "travel", "create", "wonder",
+  "helper", "gentle", "hungry", "sleepy", "simple", "around", "inside", "before",
+]);
+
+export const WORDS7: CardItem[] = makeWordCards([
+  "brother", "grandma", "grandpa", "teacher", "student", "kitchen", "bedroom", "morning",
+  "picture", "chicken", "blanket", "careful", "helpful", "playful", "healthy", "welcome",
+  "pretend", "explain", "imagine", "collect", "protect", "sharing", "reading", "drawing",
+  "singing", "running", "walking", "cooking", "washing", "waiting",
+]);
+
+export const WORDS8: CardItem[] = makeWordCards([
+  "daughter", "children", "grandson", "sandwich", "birthday", "backpack", "bathroom", "homework",
+  "kindness", "thankful", "friendly", "cheerful", "together", "tomorrow", "favorite", "remember",
+  "discover", "practice", "describe", "question", "counting", "learning", "painting", "climbing",
+  "swimming", "cleaning", "helping", "teaching",
+]);
 
 export const BODY_PARTS: CardItem[] = [
   { word: "HEAD", emoji: "🧠", say: "head" },
@@ -391,7 +430,7 @@ export const COLOR_PENTAGONS = makeColorShapes("pentagon");
 export const COLOR_HEXAGONS = makeColorShapes("hexagon");
 
 export type Mode =
-  | "words" | "words3" | "words4"
+  | "words" | "words3" | "words4" | "words5" | "words6" | "words7" | "words8"
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
@@ -404,6 +443,10 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "words":    return WORDS;
     case "words3":   return WORDS3;
     case "words4":   return WORDS4;
+    case "words5":   return WORDS5;
+    case "words6":   return WORDS6;
+    case "words7":   return WORDS7;
+    case "words8":   return WORDS8;
     case "letters":  return LETTERS;
     case "numbers":  return NUMBERS;
     case "num11":    return NUMBERS_11_20;

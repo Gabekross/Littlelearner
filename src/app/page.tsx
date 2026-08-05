@@ -29,6 +29,10 @@ const CATEGORIES: CategoryTab[] = [
       { mode: "words", label: "2-Letter" },
       { mode: "words3", label: "3-Letter" },
       { mode: "words4", label: "4-Letter" },
+      { mode: "words5", label: "5-Letter" },
+      { mode: "words6", label: "6-Letter" },
+      { mode: "words7", label: "7-Letter" },
+      { mode: "words8", label: "8-Letter" },
     ],
   },
   {
@@ -136,7 +140,8 @@ export default function Home() {
   const activeCat = CATEGORIES.find((c) => c.key === activeCategory)!;
   const showSubTabs = activeCat.modes.length > 1;
   const showShapeCards = mode === "shapes" || activeCategory === "colorShapes";
-  const showSpellControls = mode === "words" || mode === "words3" || mode === "words4";
+  const isWordMode = activeCategory === "words";
+  const showSpellControls = isWordMode;
 
   useEffect(() => {
     const resizeCanvas = () => {
@@ -228,13 +233,13 @@ export default function Home() {
   useEffect(() => {
     const data = [...getDataForMode(mode), ...customItems];
     const texts = data.map((d) => d.say);
-    if (mode === "words" || mode === "words3" || mode === "words4") {
+    if (isWordMode) {
       const letters = new Set<string>();
       data.forEach((d) => d.word.split("").forEach((ch) => letters.add(ch)));
       texts.push(...letters);
     }
     preloadAudio(texts);
-  }, [mode, customItems]);
+  }, [mode, customItems, isWordMode]);
 
   const showToast = useCallback((text: string) => {
     setToastText(text);
@@ -492,7 +497,7 @@ export default function Home() {
             ))
           ) : (
             data.map((item, i) => (
-              <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && (mode === "words" || mode === "words3" || mode === "words4")} onSpeak={handleSpeak} />
+              <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && isWordMode} onSpeak={handleSpeak} />
             ))
           )}
         </div>
