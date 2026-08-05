@@ -136,6 +136,7 @@ export default function Home() {
   const activeCat = CATEGORIES.find((c) => c.key === activeCategory)!;
   const showSubTabs = activeCat.modes.length > 1;
   const showShapeCards = mode === "shapes" || activeCategory === "colorShapes";
+  const showSpellControls = mode === "words" || mode === "words3" || mode === "words4";
 
   useEffect(() => {
     const resizeCanvas = () => {
@@ -393,17 +394,6 @@ export default function Home() {
             />
             <label>🔊</label>
           </div>
-          <div className={styles.settingRow}>
-            <label className={styles.toggleLabel}>
-              <span>Spell Mode</span>
-              <input
-                type="checkbox"
-                checked={spellMode}
-                onChange={(e) => setSpellMode(e.target.checked)}
-              />
-              <span className={styles.toggleSlider} />
-            </label>
-          </div>
           {mode === "body" && (
             <div className={styles.settingRow}>
               <label className={styles.toggleLabel}>
@@ -445,6 +435,29 @@ export default function Home() {
                 {m.label}
               </button>
             ))}
+          </div>
+        )}
+
+        {showSpellControls && (
+          <div className={styles.practiceTools} aria-label="Word practice mode">
+            <div className={styles.practiceToggle}>
+              <button
+                className={`${styles.practiceBtn} ${!spellMode ? styles.practiceActive : ""}`}
+                type="button"
+                aria-pressed={!spellMode}
+                onClick={() => setSpellMode(false)}
+              >
+                Say
+              </button>
+              <button
+                className={`${styles.practiceBtn} ${spellMode ? styles.practiceActive : ""}`}
+                type="button"
+                aria-pressed={spellMode}
+                onClick={() => setSpellMode(true)}
+              >
+                Spell
+              </button>
+            </div>
           </div>
         )}
       </nav>

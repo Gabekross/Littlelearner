@@ -294,6 +294,45 @@
 
 /* ── Card grid ── */
 
+.practiceTools {
+  display: flex;
+  justify-content: center;
+  padding: 0 12px 10px;
+}
+
+.practiceToggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(78px, 1fr));
+  width: min(280px, 100%);
+  padding: 4px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.practiceBtn {
+  min-height: 38px;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.62);
+  cursor: pointer;
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.practiceActive {
+  background: #ffd700;
+  color: #1d1a07;
+  box-shadow: 0 3px 0 #a87900, 0 8px 18px rgba(255, 215, 0, 0.22);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(150px, 42vw), 1fr));
