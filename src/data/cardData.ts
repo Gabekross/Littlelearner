@@ -4,6 +4,8 @@ export interface CardItem {
   say: string;
   image?: string;
   color?: string;
+  shape?: "circle" | "square" | "triangle" | "rectangle" | "oval" | "diamond" | "star" | "heart" | "pentagon" | "hexagon";
+  shapeColor?: string;
 }
 
 export const WORDS: CardItem[] = [
@@ -323,12 +325,25 @@ export const COLORS: CardItem[] = [
   { word: "MAROON", emoji: "🫀", say: "maroon", color: "#800020" },
 ];
 
+export const SHAPES: CardItem[] = [
+  { word: "CIRCLE", emoji: "", say: "circle", shape: "circle", shapeColor: "#FF6B6B" },
+  { word: "SQUARE", emoji: "", say: "square", shape: "square", shapeColor: "#4ECDC4" },
+  { word: "TRIANGLE", emoji: "", say: "triangle", shape: "triangle", shapeColor: "#FFD166" },
+  { word: "RECTANGLE", emoji: "", say: "rectangle", shape: "rectangle", shapeColor: "#5C7CFA" },
+  { word: "OVAL", emoji: "", say: "oval", shape: "oval", shapeColor: "#B197FC" },
+  { word: "DIAMOND", emoji: "", say: "diamond", shape: "diamond", shapeColor: "#FF922B" },
+  { word: "STAR", emoji: "", say: "star", shape: "star", shapeColor: "#FCC419" },
+  { word: "HEART", emoji: "", say: "heart", shape: "heart", shapeColor: "#F06595" },
+  { word: "PENTAGON", emoji: "", say: "pentagon", shape: "pentagon", shapeColor: "#69DB7C" },
+  { word: "HEXAGON", emoji: "", say: "hexagon", shape: "hexagon", shapeColor: "#22B8CF" },
+];
+
 export type Mode =
   | "words" | "words3" | "words4"
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
-  | "fruits" | "colors" | "body" | "stories" | "opposites";
+  | "fruits" | "colors" | "shapes" | "body" | "stories" | "opposites";
 
 export function getDataForMode(mode: Mode): CardItem[] {
   switch (mode) {
@@ -348,6 +363,7 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "num91":    return NUMBERS_91_100;
     case "fruits":   return FRUITS;
     case "colors":   return COLORS;
+    case "shapes":   return SHAPES;
     case "body":     return BODY_PARTS;
     case "stories":    return [];
     case "opposites":  return [];

@@ -5,6 +5,7 @@ import { getDataForMode, type Mode, type CardItem } from "@/data/cardData";
 import { preloadAudio, speak } from "@/lib/speech";
 import LearnerCard from "@/components/LearnerCard";
 import ColorCard from "@/components/ColorCard";
+import ShapeCard from "@/components/ShapeCard";
 import BodyDiagram from "@/components/BodyDiagram";
 import StoryView from "@/components/StoryView";
 import OppositesView from "@/components/OppositesView";
@@ -60,6 +61,7 @@ const CATEGORIES: CategoryTab[] = [
     modes: [
       { mode: "fruits", label: "Fruits" },
       { mode: "colors", label: "Colors" },
+      { mode: "shapes", label: "Shapes" },
       { mode: "body", label: "Body" },
       { mode: "opposites", label: "Opposites" },
     ],
@@ -445,6 +447,15 @@ export default function Home() {
                 index={i}
                 revealed={revealedColor === item.word}
                 onReveal={(word) => setRevealedColor(word)}
+                onSpeak={handleSpeak}
+              />
+            ))
+          ) : mode === "shapes" ? (
+            data.map((item, i) => (
+              <ShapeCard
+                key={`shapes-${item.word}`}
+                item={item}
+                index={i}
                 onSpeak={handleSpeak}
               />
             ))
