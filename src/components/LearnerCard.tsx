@@ -143,8 +143,8 @@ export default function LearnerCard({ item, index, large, spellFirst, onSpeak }:
               <Image
                 src={item.image}
                 alt={item.say}
-                width={large ? 320 : 160}
-                height={large ? 240 : 160}
+                width={large ? 420 : 160}
+                height={large ? 320 : 160}
               />
             </div>
           ) : (

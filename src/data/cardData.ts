@@ -217,6 +217,7 @@ export const ANIMALS: CardItem[] = [
   { word: "LION", emoji: "🦁", say: "lion", image: "/animals/lion.jpg" },
   { word: "TIGER", emoji: "🐯", say: "tiger", image: "/animals/tiger.jpg" },
   { word: "BEAR", emoji: "🐻", say: "bear", image: "/animals/bear.jpg" },
+  { word: "ALLIGATOR", emoji: "🐊", say: "alligator", image: "/animals/alligator.jpg" },
   { word: "MONKEY", emoji: "🐵", say: "monkey", image: "/animals/monkey.jpg" },
   { word: "ZEBRA", emoji: "🦓", say: "zebra", image: "/animals/zebra.jpg" },
   { word: "GIRAFFE", emoji: "🦒", say: "giraffe", image: "/animals/giraffe.jpg" },

@@ -345,9 +345,9 @@
 }
 
 .animalGrid {
-  grid-template-columns: repeat(auto-fill, minmax(min(220px, 88vw), 1fr));
-  gap: 20px;
-  max-width: 1120px;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 92vw), 1fr));
+  gap: 24px;
+  max-width: 1240px;
 }
 
 /* ── Toast ── */
@@ -387,7 +387,7 @@
 
   .animalGrid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 18px;
   }
 
   .catBtn {
@@ -406,7 +406,7 @@
   }
 
   .animalGrid {
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
@@ -420,6 +420,6 @@
   }
 
   .animalGrid {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 }

@@ -20,6 +20,7 @@ Real-life animal photos downloaded from Wikipedia/Wikimedia thumbnails for Littl
 - LION: 020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg from https://en.wikipedia.org/wiki/Lion
 - TIGER: Bengal_tiger_(Panthera_tigris_tigris)_female_3_crop.jpg from https://en.wikipedia.org/wiki/Tiger
 - BEAR: Ours_brun_parcanimalierpyrenees_1.jpg from https://en.wikipedia.org/wiki/Bear
+- ALLIGATOR: AmericanAlligator.JPG from https://en.wikipedia.org/wiki/Alligator
 - MONKEY: Ubud_Monkey_Family.jpg from https://en.wikipedia.org/wiki/Monkey
 - ZEBRA: Plains_Zebra_Equus_quagga_cropped.jpg from https://en.wikipedia.org/wiki/Zebra
 - GIRAFFE: Giraffe_Mikumi_National_Park.jpg from https://en.wikipedia.org/wiki/Giraffe
