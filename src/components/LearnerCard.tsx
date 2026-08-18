@@ -140,7 +140,12 @@ export default function LearnerCard({ item, index, large, spellFirst, onSpeak }:
         <div className={`${styles.face} ${colorClasses[index % 10]}`}>
           {item.image ? (
             <div className={styles.fruitImage}>
-              <Image src={item.image} alt={item.say} width={80} height={80} />
+              <Image
+                src={item.image}
+                alt={item.say}
+                width={large ? 320 : 160}
+                height={large ? 240 : 160}
+              />
             </div>
           ) : (
             <div className={styles.emoji}>{item.emoji}</div>

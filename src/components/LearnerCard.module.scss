@@ -147,6 +147,13 @@ $colors: (
     margin-bottom: 12px;
   }
 
+  .fruitImage {
+    width: min(100%, clamp(150px, 44vw, 230px));
+    height: clamp(130px, 34vw, 180px);
+    border-radius: 18px;
+    margin-bottom: 12px;
+  }
+
   .word {
     font-size: clamp(2.1rem, 7vw, 3.4rem);
     letter-spacing: 1px;
