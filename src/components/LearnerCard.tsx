@@ -16,11 +16,12 @@ let activeSpellCancel: (() => void) | null = null;
 interface Props {
   item: CardItem;
   index: number;
+  large?: boolean;
   spellFirst?: boolean;
   onSpeak: (text: string, card: HTMLDivElement, wave: HTMLDivElement) => void;
 }
 
-export default function LearnerCard({ item, index, spellFirst, onSpeak }: Props) {
+export default function LearnerCard({ item, index, large, spellFirst, onSpeak }: Props) {
   const card3dRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
@@ -129,7 +130,7 @@ export default function LearnerCard({ item, index, spellFirst, onSpeak }: Props)
 
   return (
     <div
-      className={styles.wrap}
+      className={`${styles.wrap} ${large ? styles.large : ""}`}
       onTouchEnd={handleTap}
       onClick={handleTap}
       onMouseMove={handleMouseMove}

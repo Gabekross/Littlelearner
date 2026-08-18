@@ -64,6 +64,7 @@ const CATEGORIES: CategoryTab[] = [
     label: "Explore",
     modes: [
       { mode: "fruits", label: "Fruits" },
+      { mode: "animals", label: "Animals" },
       { mode: "colors", label: "Colors" },
       { mode: "shapes", label: "Shapes" },
       { mode: "body", label: "Body" },
@@ -141,6 +142,7 @@ export default function Home() {
   const showSubTabs = activeCat.modes.length > 1;
   const showShapeCards = mode === "shapes" || activeCategory === "colorShapes";
   const isWordMode = activeCategory === "words";
+  const isAnimalMode = mode === "animals";
   const showSpellControls = isWordMode;
 
   useEffect(() => {
@@ -474,7 +476,7 @@ export default function Home() {
       ) : mode === "body" ? (
         <BodyDiagram onSpeak={handleSpeak} photoMode={photoMode} fadeDuration={fadeDuration} />
       ) : (
-        <div className={styles.grid}>
+        <div className={`${styles.grid} ${isAnimalMode ? styles.animalGrid : ""}`}>
           {mode === "colors" ? (
             data.map((item, i) => (
               <ColorCard
@@ -497,7 +499,14 @@ export default function Home() {
             ))
           ) : (
             data.map((item, i) => (
-              <LearnerCard key={`${mode}-${item.word}`} item={item} index={i} spellFirst={spellMode && isWordMode} onSpeak={handleSpeak} />
+              <LearnerCard
+                key={`${mode}-${item.word}`}
+                item={item}
+                index={i}
+                large={isAnimalMode}
+                spellFirst={spellMode && isWordMode}
+                onSpeak={handleSpeak}
+              />
             ))
           )}
         </div>

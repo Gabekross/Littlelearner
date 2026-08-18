@@ -37,6 +37,7 @@ const CATEGORIES = [
   { key: "num81", label: "81-90" },
   { key: "num91", label: "91-100" },
   { key: "fruits", label: "Fruits" },
+  { key: "animals", label: "Animals" },
   { key: "colors", label: "Colors" },
   { key: "body", label: "Body Parts" },
 ];

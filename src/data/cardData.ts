@@ -198,6 +198,39 @@ export const FRUITS: CardItem[] = [
   { word: "AVOCADO", emoji: "🥑", say: "avocado", image: "/fruits/avocado.jpg" },
 ];
 
+export const ANIMALS: CardItem[] = [
+  { word: "CAT", emoji: "🐱", say: "cat" },
+  { word: "DOG", emoji: "🐶", say: "dog" },
+  { word: "COW", emoji: "🐄", say: "cow" },
+  { word: "PIG", emoji: "🐷", say: "pig" },
+  { word: "HEN", emoji: "🐔", say: "hen" },
+  { word: "DUCK", emoji: "🦆", say: "duck" },
+  { word: "GOAT", emoji: "🐐", say: "goat" },
+  { word: "SHEEP", emoji: "🐑", say: "sheep" },
+  { word: "HORSE", emoji: "🐴", say: "horse" },
+  { word: "RABBIT", emoji: "🐰", say: "rabbit" },
+  { word: "MOUSE", emoji: "🐭", say: "mouse" },
+  { word: "FISH", emoji: "🐟", say: "fish" },
+  { word: "BIRD", emoji: "🐦", say: "bird" },
+  { word: "FROG", emoji: "🐸", say: "frog" },
+  { word: "TURTLE", emoji: "🐢", say: "turtle" },
+  { word: "LION", emoji: "🦁", say: "lion" },
+  { word: "TIGER", emoji: "🐯", say: "tiger" },
+  { word: "BEAR", emoji: "🐻", say: "bear" },
+  { word: "MONKEY", emoji: "🐵", say: "monkey" },
+  { word: "ZEBRA", emoji: "🦓", say: "zebra" },
+  { word: "GIRAFFE", emoji: "🦒", say: "giraffe" },
+  { word: "ELEPHANT", emoji: "🐘", say: "elephant" },
+  { word: "PANDA", emoji: "🐼", say: "panda" },
+  { word: "KANGAROO", emoji: "🦘", say: "kangaroo" },
+  { word: "DOLPHIN", emoji: "🐬", say: "dolphin" },
+  { word: "WHALE", emoji: "🐳", say: "whale" },
+  { word: "SNAKE", emoji: "🐍", say: "snake" },
+  { word: "BUTTERFLY", emoji: "🦋", say: "butterfly" },
+  { word: "BEE", emoji: "🐝", say: "bee" },
+  { word: "ANT", emoji: "🐜", say: "ant" },
+];
+
 export const WORDS3: CardItem[] = [
   { word: "CAT", emoji: "🐱", say: "cat" },
   { word: "DOG", emoji: "🐶", say: "dog" },
@@ -434,7 +467,7 @@ export type Mode =
   | "letters"
   | "numbers" | "num11" | "num21" | "num31" | "num41" | "num51"
   | "num61" | "num71" | "num81" | "num91"
-  | "fruits" | "colors" | "shapes" | "body" | "stories" | "opposites"
+  | "fruits" | "animals" | "colors" | "shapes" | "body" | "stories" | "opposites"
   | "colorCircles" | "colorSquares" | "colorTriangles" | "colorRectangles" | "colorOvals"
   | "colorDiamonds" | "colorStars" | "colorHearts" | "colorPentagons" | "colorHexagons";
 
@@ -459,6 +492,7 @@ export function getDataForMode(mode: Mode): CardItem[] {
     case "num81":    return NUMBERS_81_90;
     case "num91":    return NUMBERS_91_100;
     case "fruits":   return FRUITS;
+    case "animals":  return ANIMALS;
     case "colors":   return COLORS;
     case "shapes":   return SHAPES;
     case "body":     return BODY_PARTS;
