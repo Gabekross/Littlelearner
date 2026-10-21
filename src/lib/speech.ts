@@ -1,8 +1,14 @@
+import audioManifest from "@/data/audioManifest.json";
+
+const BUNDLED: Record<string, string> = audioManifest;
+
 const audioCache = new Map<string, HTMLAudioElement>();
 let activeAudio: HTMLAudioElement | null = null;
 let playbackId = 0;
 
-function getTtsUrl(text: string): string {
+function getAudioUrl(text: string): string {
+  const bundled = BUNDLED[text];
+  if (bundled) return `/audio/${bundled}`;
   return `/api/tts?q=${encodeURIComponent(text)}`;
 }
 
@@ -11,13 +17,15 @@ export function preloadAudio(texts: string[]) {
     if (audioCache.has(text)) continue;
     const audio = new Audio();
     audio.preload = "auto";
-    audio.src = getTtsUrl(text);
+    audio.src = getAudioUrl(text);
     audioCache.set(text, audio);
   }
 }
 
 export function cancelSpeech() {
   playbackId++;
+
+  window.speechSynthesis?.cancel();
 
   if (!activeAudio) return;
 
@@ -27,6 +35,33 @@ export function cancelSpeech() {
   activeAudio.pause();
   activeAudio.currentTime = 0;
   activeAudio = null;
+}
+
+// Last-resort fallback: speak with the device's own voice so a card
+// is never silent even if both the bundle and the TTS proxy fail.
+function speakWithDevice(
+  text: string,
+  volume: number,
+  currentPlaybackId: number,
+  onStart: () => void,
+  onEnd: () => void
+) {
+  if (typeof window === "undefined" || !window.speechSynthesis) {
+    onEnd();
+    return;
+  }
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.volume = volume;
+  utt.rate = 0.9;
+  utt.onstart = () => {
+    if (currentPlaybackId === playbackId) onStart();
+  };
+  const finish = () => {
+    if (currentPlaybackId === playbackId) onEnd();
+  };
+  utt.onend = finish;
+  utt.onerror = finish;
+  window.speechSynthesis.speak(utt);
 }
 
 export function speak(
@@ -51,7 +86,7 @@ export function speak(
   }
 
   if (!audio) {
-    audio = new Audio(getTtsUrl(text));
+    audio = new Audio(getAudioUrl(text));
     audioCache.set(text, audio);
   }
 
@@ -72,19 +107,21 @@ export function speak(
     onEnd();
   };
 
+  const fallback = () => {
+    if (currentPlaybackId !== playbackId) return;
+    if (ended) return;
+    ended = true;
+    audioCache.delete(text);
+    if (activeAudio === audio) activeAudio = null;
+    speakWithDevice(text, volume, currentPlaybackId, onStart, onEnd);
+  };
+
   audio.onplay = () => {
     if (currentPlaybackId !== playbackId) return;
     onStart();
   };
   audio.onended = finish;
-  audio.onerror = () => {
-    audioCache.delete(text);
-    finish();
-  };
+  audio.onerror = fallback;
 
-  audio.play().catch(() => {
-    if (currentPlaybackId !== playbackId) return;
-    audioCache.delete(text);
-    finish();
-  });
+  audio.play().catch(fallback);
 }

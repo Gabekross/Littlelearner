@@ -26,6 +26,7 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/icons/") ||
     url.pathname.startsWith("/fruits/") ||
     url.pathname.startsWith("/body/") ||
+    url.pathname.startsWith("/audio/") ||
     url.pathname.startsWith("/api/tts");
 
   if (cacheFirst) {
